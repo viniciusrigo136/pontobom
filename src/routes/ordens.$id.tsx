@@ -29,17 +29,6 @@ type OS = {
   assinatura_cliente_nome: string | null; assinatura_cliente_imagem: string | null;
 };
 
-const CHECKLIST_ITEMS = [
-  "Tela funcionando", "Touch funcionando",
-  "Face ID / Biometria", "Câmera frontal",
-  "Câmera traseira", "Flash",
-  "Microfone", "Alto-falante",
-  "Auricular (ligação)", "Sensor de proximidade",
-  "Vibração", "Wi-Fi",
-  "Bluetooth", "Sinal / Rede",
-  "Leitor de chip / SIM", "Carregamento",
-  "Bateria (autonomia)", "Botões (power/volume)",
-];
 
 function OSDetail() {
   const { id } = Route.useParams();
