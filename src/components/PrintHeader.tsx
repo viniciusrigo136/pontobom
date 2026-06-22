@@ -9,6 +9,8 @@ export type Empresa = {
   telefone?: string | null;
   responsavel?: string | null;
   logo_url?: string | null;
+  pix_tipo?: string | null;
+  pix_chave?: string | null;
 };
 
 export function useEmpresa() {
