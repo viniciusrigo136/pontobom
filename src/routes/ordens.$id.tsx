@@ -29,17 +29,6 @@ type OS = {
   assinatura_cliente_nome: string | null; assinatura_cliente_imagem: string | null;
 };
 
-const CHECKLIST_ITEMS = [
-  "Tela funcionando", "Touch funcionando",
-  "Face ID / Biometria", "Câmera frontal",
-  "Câmera traseira", "Flash",
-  "Microfone", "Alto-falante",
-  "Auricular (ligação)", "Sensor de proximidade",
-  "Vibração", "Wi-Fi",
-  "Bluetooth", "Sinal / Rede",
-  "Leitor de chip / SIM", "Carregamento",
-  "Bateria (autonomia)", "Botões (power/volume)",
-];
 
 function OSDetail() {
   const { id } = Route.useParams();
@@ -233,16 +222,14 @@ function OSDetail() {
           </PrintSection>
         )}
 
-        <PrintSection title={`Checklist — ${os.tipo_dispositivo || "Celular"}`}>
-          <div className="grid grid-cols-2 gap-x-6 text-xs">
-            {CHECKLIST_ITEMS.map((it) => (
-              <div key={it} className="flex justify-between border-b border-gray-300 py-1">
-                <span>{it}</span>
-                <span className="font-bold">{os.checklist?.[it] ? "✓" : "—"}</span>
-              </div>
-            ))}
-          </div>
-        </PrintSection>
+        {empresa?.pix_chave && (
+          <PrintSection title="Pagamento via PIX">
+            <div className="border border-gray-400 rounded px-3 py-2 text-sm">
+              <span className="font-semibold">{empresa.pix_tipo || "Chave"}:</span>{" "}
+              <span className="font-mono">{empresa.pix_chave}</span>
+            </div>
+          </PrintSection>
+        )}
 
         <div className="mt-12 grid grid-cols-2 gap-12">
           <div className="text-center">

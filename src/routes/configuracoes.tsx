@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Upload, X } from "lucide-react";
 
@@ -16,6 +17,7 @@ function ConfigPage() {
   const [id, setId] = useState<string | null>(null);
   const [data, setData] = useState({
     nome: "", cnpj: "", endereco: "", email: "", telefone: "", responsavel: "", logo_url: "",
+    pix_tipo: "", pix_chave: "",
   });
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -31,6 +33,8 @@ function ConfigPage() {
           telefone: row.telefone || "",
           responsavel: row.responsavel || "",
           logo_url: (row as { logo_url?: string | null }).logo_url || "",
+          pix_tipo: (row as { pix_tipo?: string | null }).pix_tipo || "",
+          pix_chave: (row as { pix_chave?: string | null }).pix_chave || "",
         });
       }
     });
@@ -101,6 +105,30 @@ function ConfigPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div><Label>E-mail</Label><Input value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} /></div>
             <div><Label>Tel/WhatsApp</Label><Input value={data.telefone} onChange={(e) => setData({ ...data, telefone: e.target.value })} /></div>
+          </div>
+          <div className="pt-2 border-t border-border">
+            <Label className="text-base font-semibold">Chave PIX</Label>
+            <p className="text-xs text-muted-foreground mb-2">Aparecerá no rodapé das Ordens de Serviço impressas.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <Label>Tipo</Label>
+                <Select value={data.pix_tipo || "none"} onValueChange={(v) => setData({ ...data, pix_tipo: v === "none" ? "" : v })}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">—</SelectItem>
+                    <SelectItem value="CPF">CPF</SelectItem>
+                    <SelectItem value="CNPJ">CNPJ</SelectItem>
+                    <SelectItem value="E-mail">E-mail</SelectItem>
+                    <SelectItem value="Celular">Celular</SelectItem>
+                    <SelectItem value="Aleatória">Aleatória</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="md:col-span-2">
+                <Label>Chave</Label>
+                <Input value={data.pix_chave} onChange={(e) => setData({ ...data, pix_chave: e.target.value })} placeholder="Digite a chave PIX" />
+              </div>
+            </div>
           </div>
           <Button onClick={salvar} className="w-full">Salvar</Button>
         </CardContent>

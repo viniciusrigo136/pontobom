@@ -1,0 +1,1 @@
+ALTER TABLE public.empresa ADD COLUMN IF NOT EXISTS pix_tipo text, ADD COLUMN IF NOT EXISTS pix_chave text;
