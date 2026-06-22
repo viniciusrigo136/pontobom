@@ -58,8 +58,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ProTechOS — Gestão de Assistência Técnica" },
+      { title: "PontoBomOS — Gestão de Assistência Técnica" },
       { name: "description", content: "Sistema completo de gestão para assistência técnica de dispositivos móveis." },
+      { property: "og:title", content: "PontoBomOS — Gestão de Assistência Técnica" },
+      { name: "twitter:title", content: "PontoBomOS — Gestão de Assistência Técnica" },
+      { property: "og:description", content: "Sistema completo de gestão para assistência técnica de dispositivos móveis." },
+      { name: "twitter:description", content: "Sistema completo de gestão para assistência técnica de dispositivos móveis." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4e30fc20-0702-4fc1-b5fb-56fa221a1eaa/id-preview-cb47d2e7--9c1c533c-dae8-428d-b53b-0071a97fcfb0.lovable.app-1782172628782.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4e30fc20-0702-4fc1-b5fb-56fa221a1eaa/id-preview-cb47d2e7--9c1c533c-dae8-428d-b53b-0071a97fcfb0.lovable.app-1782172628782.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -71,14 +79,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    <html lang="pt-BR" className="dark">
       <head>
         <HeadContent />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('protechos.theme');var c=document.documentElement.classList;if(t==='light'){c.remove('dark');c.add('light');}else{c.add('dark');c.remove('light');}}catch(e){}})();`,
-          }}
-        />
       </head>
       <body>
         {children}
