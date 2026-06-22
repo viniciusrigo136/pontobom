@@ -50,6 +50,8 @@ export type Database = {
           id: string
           logo_url: string | null
           nome: string | null
+          pix_chave: string | null
+          pix_tipo: string | null
           responsavel: string | null
           telefone: string | null
           updated_at: string
@@ -62,6 +64,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           nome?: string | null
+          pix_chave?: string | null
+          pix_tipo?: string | null
           responsavel?: string | null
           telefone?: string | null
           updated_at?: string
@@ -74,6 +78,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           nome?: string | null
+          pix_chave?: string | null
+          pix_tipo?: string | null
           responsavel?: string | null
           telefone?: string | null
           updated_at?: string
