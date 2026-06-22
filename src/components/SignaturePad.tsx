@@ -82,7 +82,7 @@ function Pad({ height = 160, onChange }: { height?: number; onChange?: (dataUrl:
   return (
     <div className="space-y-2">
       <div
-        className="rounded-md border border-dashed border-border bg-secondary/30"
+        className="rounded-md border border-dashed border-border bg-white"
         style={{ height }}
       >
         <canvas
