@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -8,14 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/configuracoes")({ component: ConfigPage });
 
 function ConfigPage() {
   const [id, setId] = useState<string | null>(null);
   const [data, setData] = useState({
-    nome: "", cnpj: "", endereco: "", email: "", telefone: "", responsavel: "",
+    nome: "", cnpj: "", endereco: "", email: "", telefone: "", responsavel: "", logo_url: "",
   });
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     supabase.from("empresa").select("*").limit(1).maybeSingle().then(({ data: row }) => {
@@ -28,10 +30,26 @@ function ConfigPage() {
           email: row.email || "",
           telefone: row.telefone || "",
           responsavel: row.responsavel || "",
+          logo_url: (row as { logo_url?: string | null }).logo_url || "",
         });
       }
     });
   }, []);
+
+  const uploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const ext = file.name.split(".").pop() || "png";
+    const path = `empresa/logo-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("protechos").upload(path, file, { contentType: file.type });
+    if (error) return toast.error(error.message);
+    const { data: signed } = await supabase.storage.from("protechos").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+    if (signed?.signedUrl) {
+      setData((d) => ({ ...d, logo_url: signed.signedUrl }));
+      toast.success("Logo enviada");
+    }
+    if (fileRef.current) fileRef.current.value = "";
+  };
 
   const salvar = async () => {
     const payload = { ...data, updated_at: new Date().toISOString() };
@@ -49,6 +67,31 @@ function ConfigPage() {
       <Card className="max-w-2xl">
         <CardHeader><CardTitle>Dados da Empresa</CardTitle></CardHeader>
         <CardContent className="space-y-4">
+          <div>
+            <Label>Logo</Label>
+            <div className="flex items-center gap-4 mt-1">
+              {data.logo_url ? (
+                <div className="relative">
+                  <img src={data.logo_url} alt="" className="h-20 w-20 object-contain rounded border border-border bg-white p-1" />
+                  <button
+                    type="button"
+                    onClick={() => setData({ ...data, logo_url: "" })}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="h-20 w-20 rounded border-2 border-dashed border-border flex items-center justify-center text-muted-foreground text-xs">
+                  Sem logo
+                </div>
+              )}
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={uploadLogo} />
+              <Button type="button" variant="outline" onClick={() => fileRef.current?.click()}>
+                <Upload className="mr-2 h-4 w-4" /> Enviar logo
+              </Button>
+            </div>
+          </div>
           <div><Label>Nome da empresa</Label><Input value={data.nome} onChange={(e) => setData({ ...data, nome: e.target.value })} /></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div><Label>CNPJ</Label><Input value={data.cnpj} onChange={(e) => setData({ ...data, cnpj: e.target.value })} /></div>
