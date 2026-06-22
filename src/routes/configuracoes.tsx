@@ -33,6 +33,8 @@ function ConfigPage() {
           telefone: row.telefone || "",
           responsavel: row.responsavel || "",
           logo_url: (row as { logo_url?: string | null }).logo_url || "",
+          pix_tipo: (row as { pix_tipo?: string | null }).pix_tipo || "",
+          pix_chave: (row as { pix_chave?: string | null }).pix_chave || "",
         });
       }
     });
