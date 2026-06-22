@@ -9,38 +9,264 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VendasRouteImport } from './routes/vendas'
+import { Route as OrdensRouteImport } from './routes/ordens'
+import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as EstoqueRouteImport } from './routes/estoque'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ClientesRouteImport } from './routes/clientes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VendasIndexRouteImport } from './routes/vendas.index'
+import { Route as OrdensIndexRouteImport } from './routes/ordens.index'
+import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
+import { Route as VendasNovaRouteImport } from './routes/vendas.nova'
+import { Route as VendasIdRouteImport } from './routes/vendas.$id'
+import { Route as OrdensNovaRouteImport } from './routes/ordens.nova'
+import { Route as OrdensIdRouteImport } from './routes/ordens.$id'
+import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
+import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
 
+const VendasRoute = VendasRouteImport.update({
+  id: '/vendas',
+  path: '/vendas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdensRoute = OrdensRouteImport.update({
+  id: '/ordens',
+  path: '/ordens',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentosRoute = OrcamentosRouteImport.update({
+  id: '/orcamentos',
+  path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstoqueRoute = EstoqueRouteImport.update({
+  id: '/estoque',
+  path: '/estoque',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientesRoute = ClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VendasIndexRoute = VendasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VendasRoute,
+} as any)
+const OrdensIndexRoute = OrdensIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrdensRoute,
+} as any)
+const OrcamentosIndexRoute = OrcamentosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrcamentosRoute,
+} as any)
+const VendasNovaRoute = VendasNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => VendasRoute,
+} as any)
+const VendasIdRoute = VendasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => VendasRoute,
+} as any)
+const OrdensNovaRoute = OrdensNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => OrdensRoute,
+} as any)
+const OrdensIdRoute = OrdensIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => OrdensRoute,
+} as any)
+const OrcamentosNovoRoute = OrcamentosNovoRouteImport.update({
+  id: '/novo',
+  path: '/novo',
+  getParentRoute: () => OrcamentosRoute,
+} as any)
+const OrcamentosIdRoute = OrcamentosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => OrcamentosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/clientes': typeof ClientesRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/estoque': typeof EstoqueRoute
+  '/orcamentos': typeof OrcamentosRouteWithChildren
+  '/ordens': typeof OrdensRouteWithChildren
+  '/vendas': typeof VendasRouteWithChildren
+  '/orcamentos/$id': typeof OrcamentosIdRoute
+  '/orcamentos/novo': typeof OrcamentosNovoRoute
+  '/ordens/$id': typeof OrdensIdRoute
+  '/ordens/nova': typeof OrdensNovaRoute
+  '/vendas/$id': typeof VendasIdRoute
+  '/vendas/nova': typeof VendasNovaRoute
+  '/orcamentos/': typeof OrcamentosIndexRoute
+  '/ordens/': typeof OrdensIndexRoute
+  '/vendas/': typeof VendasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/clientes': typeof ClientesRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/estoque': typeof EstoqueRoute
+  '/orcamentos/$id': typeof OrcamentosIdRoute
+  '/orcamentos/novo': typeof OrcamentosNovoRoute
+  '/ordens/$id': typeof OrdensIdRoute
+  '/ordens/nova': typeof OrdensNovaRoute
+  '/vendas/$id': typeof VendasIdRoute
+  '/vendas/nova': typeof VendasNovaRoute
+  '/orcamentos': typeof OrcamentosIndexRoute
+  '/ordens': typeof OrdensIndexRoute
+  '/vendas': typeof VendasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/clientes': typeof ClientesRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/estoque': typeof EstoqueRoute
+  '/orcamentos': typeof OrcamentosRouteWithChildren
+  '/ordens': typeof OrdensRouteWithChildren
+  '/vendas': typeof VendasRouteWithChildren
+  '/orcamentos/$id': typeof OrcamentosIdRoute
+  '/orcamentos/novo': typeof OrcamentosNovoRoute
+  '/ordens/$id': typeof OrdensIdRoute
+  '/ordens/nova': typeof OrdensNovaRoute
+  '/vendas/$id': typeof VendasIdRoute
+  '/vendas/nova': typeof VendasNovaRoute
+  '/orcamentos/': typeof OrcamentosIndexRoute
+  '/ordens/': typeof OrdensIndexRoute
+  '/vendas/': typeof VendasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/clientes'
+    | '/configuracoes'
+    | '/estoque'
+    | '/orcamentos'
+    | '/ordens'
+    | '/vendas'
+    | '/orcamentos/$id'
+    | '/orcamentos/novo'
+    | '/ordens/$id'
+    | '/ordens/nova'
+    | '/vendas/$id'
+    | '/vendas/nova'
+    | '/orcamentos/'
+    | '/ordens/'
+    | '/vendas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/clientes'
+    | '/configuracoes'
+    | '/estoque'
+    | '/orcamentos/$id'
+    | '/orcamentos/novo'
+    | '/ordens/$id'
+    | '/ordens/nova'
+    | '/vendas/$id'
+    | '/vendas/nova'
+    | '/orcamentos'
+    | '/ordens'
+    | '/vendas'
+  id:
+    | '__root__'
+    | '/'
+    | '/clientes'
+    | '/configuracoes'
+    | '/estoque'
+    | '/orcamentos'
+    | '/ordens'
+    | '/vendas'
+    | '/orcamentos/$id'
+    | '/orcamentos/novo'
+    | '/ordens/$id'
+    | '/ordens/nova'
+    | '/vendas/$id'
+    | '/vendas/nova'
+    | '/orcamentos/'
+    | '/ordens/'
+    | '/vendas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClientesRoute: typeof ClientesRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  EstoqueRoute: typeof EstoqueRoute
+  OrcamentosRoute: typeof OrcamentosRouteWithChildren
+  OrdensRoute: typeof OrdensRouteWithChildren
+  VendasRoute: typeof VendasRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vendas': {
+      id: '/vendas'
+      path: '/vendas'
+      fullPath: '/vendas'
+      preLoaderRoute: typeof VendasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ordens': {
+      id: '/ordens'
+      path: '/ordens'
+      fullPath: '/ordens'
+      preLoaderRoute: typeof OrdensRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamentos': {
+      id: '/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/orcamentos'
+      preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estoque': {
+      id: '/estoque'
+      path: '/estoque'
+      fullPath: '/estoque'
+      preLoaderRoute: typeof EstoqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clientes': {
+      id: '/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +274,127 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vendas/': {
+      id: '/vendas/'
+      path: '/'
+      fullPath: '/vendas/'
+      preLoaderRoute: typeof VendasIndexRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/ordens/': {
+      id: '/ordens/'
+      path: '/'
+      fullPath: '/ordens/'
+      preLoaderRoute: typeof OrdensIndexRouteImport
+      parentRoute: typeof OrdensRoute
+    }
+    '/orcamentos/': {
+      id: '/orcamentos/'
+      path: '/'
+      fullPath: '/orcamentos/'
+      preLoaderRoute: typeof OrcamentosIndexRouteImport
+      parentRoute: typeof OrcamentosRoute
+    }
+    '/vendas/nova': {
+      id: '/vendas/nova'
+      path: '/nova'
+      fullPath: '/vendas/nova'
+      preLoaderRoute: typeof VendasNovaRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/vendas/$id': {
+      id: '/vendas/$id'
+      path: '/$id'
+      fullPath: '/vendas/$id'
+      preLoaderRoute: typeof VendasIdRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/ordens/nova': {
+      id: '/ordens/nova'
+      path: '/nova'
+      fullPath: '/ordens/nova'
+      preLoaderRoute: typeof OrdensNovaRouteImport
+      parentRoute: typeof OrdensRoute
+    }
+    '/ordens/$id': {
+      id: '/ordens/$id'
+      path: '/$id'
+      fullPath: '/ordens/$id'
+      preLoaderRoute: typeof OrdensIdRouteImport
+      parentRoute: typeof OrdensRoute
+    }
+    '/orcamentos/novo': {
+      id: '/orcamentos/novo'
+      path: '/novo'
+      fullPath: '/orcamentos/novo'
+      preLoaderRoute: typeof OrcamentosNovoRouteImport
+      parentRoute: typeof OrcamentosRoute
+    }
+    '/orcamentos/$id': {
+      id: '/orcamentos/$id'
+      path: '/$id'
+      fullPath: '/orcamentos/$id'
+      preLoaderRoute: typeof OrcamentosIdRouteImport
+      parentRoute: typeof OrcamentosRoute
+    }
   }
 }
 
+interface OrcamentosRouteChildren {
+  OrcamentosIdRoute: typeof OrcamentosIdRoute
+  OrcamentosNovoRoute: typeof OrcamentosNovoRoute
+  OrcamentosIndexRoute: typeof OrcamentosIndexRoute
+}
+
+const OrcamentosRouteChildren: OrcamentosRouteChildren = {
+  OrcamentosIdRoute: OrcamentosIdRoute,
+  OrcamentosNovoRoute: OrcamentosNovoRoute,
+  OrcamentosIndexRoute: OrcamentosIndexRoute,
+}
+
+const OrcamentosRouteWithChildren = OrcamentosRoute._addFileChildren(
+  OrcamentosRouteChildren,
+)
+
+interface OrdensRouteChildren {
+  OrdensIdRoute: typeof OrdensIdRoute
+  OrdensNovaRoute: typeof OrdensNovaRoute
+  OrdensIndexRoute: typeof OrdensIndexRoute
+}
+
+const OrdensRouteChildren: OrdensRouteChildren = {
+  OrdensIdRoute: OrdensIdRoute,
+  OrdensNovaRoute: OrdensNovaRoute,
+  OrdensIndexRoute: OrdensIndexRoute,
+}
+
+const OrdensRouteWithChildren =
+  OrdensRoute._addFileChildren(OrdensRouteChildren)
+
+interface VendasRouteChildren {
+  VendasIdRoute: typeof VendasIdRoute
+  VendasNovaRoute: typeof VendasNovaRoute
+  VendasIndexRoute: typeof VendasIndexRoute
+}
+
+const VendasRouteChildren: VendasRouteChildren = {
+  VendasIdRoute: VendasIdRoute,
+  VendasNovaRoute: VendasNovaRoute,
+  VendasIndexRoute: VendasIndexRoute,
+}
+
+const VendasRouteWithChildren =
+  VendasRoute._addFileChildren(VendasRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClientesRoute: ClientesRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  EstoqueRoute: EstoqueRoute,
+  OrcamentosRoute: OrcamentosRouteWithChildren,
+  OrdensRoute: OrdensRouteWithChildren,
+  VendasRoute: VendasRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
