@@ -17,6 +17,7 @@ function ConfigPage() {
   const [id, setId] = useState<string | null>(null);
   const [data, setData] = useState({
     nome: "", cnpj: "", endereco: "", email: "", telefone: "", responsavel: "", logo_url: "",
+    pix_tipo: "", pix_chave: "",
   });
   const fileRef = useRef<HTMLInputElement>(null);
 
