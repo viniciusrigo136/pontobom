@@ -19,8 +19,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendasIndexRouteImport } from './routes/vendas.index'
 import { Route as OrdensIndexRouteImport } from './routes/ordens.index'
 import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
+import { Route as VendasNovaRouteImport } from './routes/vendas.nova'
+import { Route as VendasIdRouteImport } from './routes/vendas.$id'
 import { Route as OrdensNovaRouteImport } from './routes/ordens.nova'
 import { Route as OrdensIdRouteImport } from './routes/ordens.$id'
+import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
+import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
 
 const VendasRoute = VendasRouteImport.update({
   id: '/vendas',
@@ -72,6 +76,16 @@ const OrcamentosIndexRoute = OrcamentosIndexRouteImport.update({
   path: '/',
   getParentRoute: () => OrcamentosRoute,
 } as any)
+const VendasNovaRoute = VendasNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => VendasRoute,
+} as any)
+const VendasIdRoute = VendasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => VendasRoute,
+} as any)
 const OrdensNovaRoute = OrdensNovaRouteImport.update({
   id: '/nova',
   path: '/nova',
@@ -82,6 +96,16 @@ const OrdensIdRoute = OrdensIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => OrdensRoute,
 } as any)
+const OrcamentosNovoRoute = OrcamentosNovoRouteImport.update({
+  id: '/novo',
+  path: '/novo',
+  getParentRoute: () => OrcamentosRoute,
+} as any)
+const OrcamentosIdRoute = OrcamentosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => OrcamentosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,8 +115,12 @@ export interface FileRoutesByFullPath {
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
   '/vendas': typeof VendasRouteWithChildren
+  '/orcamentos/$id': typeof OrcamentosIdRoute
+  '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
   '/ordens/nova': typeof OrdensNovaRoute
+  '/vendas/$id': typeof VendasIdRoute
+  '/vendas/nova': typeof VendasNovaRoute
   '/orcamentos/': typeof OrcamentosIndexRoute
   '/ordens/': typeof OrdensIndexRoute
   '/vendas/': typeof VendasIndexRoute
@@ -102,8 +130,12 @@ export interface FileRoutesByTo {
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/estoque': typeof EstoqueRoute
+  '/orcamentos/$id': typeof OrcamentosIdRoute
+  '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
   '/ordens/nova': typeof OrdensNovaRoute
+  '/vendas/$id': typeof VendasIdRoute
+  '/vendas/nova': typeof VendasNovaRoute
   '/orcamentos': typeof OrcamentosIndexRoute
   '/ordens': typeof OrdensIndexRoute
   '/vendas': typeof VendasIndexRoute
@@ -117,8 +149,12 @@ export interface FileRoutesById {
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
   '/vendas': typeof VendasRouteWithChildren
+  '/orcamentos/$id': typeof OrcamentosIdRoute
+  '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
   '/ordens/nova': typeof OrdensNovaRoute
+  '/vendas/$id': typeof VendasIdRoute
+  '/vendas/nova': typeof VendasNovaRoute
   '/orcamentos/': typeof OrcamentosIndexRoute
   '/ordens/': typeof OrdensIndexRoute
   '/vendas/': typeof VendasIndexRoute
@@ -133,8 +169,12 @@ export interface FileRouteTypes {
     | '/orcamentos'
     | '/ordens'
     | '/vendas'
+    | '/orcamentos/$id'
+    | '/orcamentos/novo'
     | '/ordens/$id'
     | '/ordens/nova'
+    | '/vendas/$id'
+    | '/vendas/nova'
     | '/orcamentos/'
     | '/ordens/'
     | '/vendas/'
@@ -144,8 +184,12 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/configuracoes'
     | '/estoque'
+    | '/orcamentos/$id'
+    | '/orcamentos/novo'
     | '/ordens/$id'
     | '/ordens/nova'
+    | '/vendas/$id'
+    | '/vendas/nova'
     | '/orcamentos'
     | '/ordens'
     | '/vendas'
@@ -158,8 +202,12 @@ export interface FileRouteTypes {
     | '/orcamentos'
     | '/ordens'
     | '/vendas'
+    | '/orcamentos/$id'
+    | '/orcamentos/novo'
     | '/ordens/$id'
     | '/ordens/nova'
+    | '/vendas/$id'
+    | '/vendas/nova'
     | '/orcamentos/'
     | '/ordens/'
     | '/vendas/'
@@ -247,6 +295,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrcamentosIndexRouteImport
       parentRoute: typeof OrcamentosRoute
     }
+    '/vendas/nova': {
+      id: '/vendas/nova'
+      path: '/nova'
+      fullPath: '/vendas/nova'
+      preLoaderRoute: typeof VendasNovaRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/vendas/$id': {
+      id: '/vendas/$id'
+      path: '/$id'
+      fullPath: '/vendas/$id'
+      preLoaderRoute: typeof VendasIdRouteImport
+      parentRoute: typeof VendasRoute
+    }
     '/ordens/nova': {
       id: '/ordens/nova'
       path: '/nova'
@@ -261,14 +323,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdensIdRouteImport
       parentRoute: typeof OrdensRoute
     }
+    '/orcamentos/novo': {
+      id: '/orcamentos/novo'
+      path: '/novo'
+      fullPath: '/orcamentos/novo'
+      preLoaderRoute: typeof OrcamentosNovoRouteImport
+      parentRoute: typeof OrcamentosRoute
+    }
+    '/orcamentos/$id': {
+      id: '/orcamentos/$id'
+      path: '/$id'
+      fullPath: '/orcamentos/$id'
+      preLoaderRoute: typeof OrcamentosIdRouteImport
+      parentRoute: typeof OrcamentosRoute
+    }
   }
 }
 
 interface OrcamentosRouteChildren {
+  OrcamentosIdRoute: typeof OrcamentosIdRoute
+  OrcamentosNovoRoute: typeof OrcamentosNovoRoute
   OrcamentosIndexRoute: typeof OrcamentosIndexRoute
 }
 
 const OrcamentosRouteChildren: OrcamentosRouteChildren = {
+  OrcamentosIdRoute: OrcamentosIdRoute,
+  OrcamentosNovoRoute: OrcamentosNovoRoute,
   OrcamentosIndexRoute: OrcamentosIndexRoute,
 }
 
@@ -292,10 +372,14 @@ const OrdensRouteWithChildren =
   OrdensRoute._addFileChildren(OrdensRouteChildren)
 
 interface VendasRouteChildren {
+  VendasIdRoute: typeof VendasIdRoute
+  VendasNovaRoute: typeof VendasNovaRoute
   VendasIndexRoute: typeof VendasIndexRoute
 }
 
 const VendasRouteChildren: VendasRouteChildren = {
+  VendasIdRoute: VendasIdRoute,
+  VendasNovaRoute: VendasNovaRoute,
   VendasIndexRoute: VendasIndexRoute,
 }
 
