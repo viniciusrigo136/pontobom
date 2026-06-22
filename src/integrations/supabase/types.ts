@@ -48,6 +48,7 @@ export type Database = {
           email: string | null
           endereco: string | null
           id: string
+          logo_url: string | null
           nome: string | null
           responsavel: string | null
           telefone: string | null
@@ -59,6 +60,7 @@ export type Database = {
           email?: string | null
           endereco?: string | null
           id?: string
+          logo_url?: string | null
           nome?: string | null
           responsavel?: string | null
           telefone?: string | null
@@ -70,6 +72,7 @@ export type Database = {
           email?: string | null
           endereco?: string | null
           id?: string
+          logo_url?: string | null
           nome?: string | null
           responsavel?: string | null
           telefone?: string | null
@@ -169,15 +172,19 @@ export type Database = {
           created_at: string
           data_entrada: string
           data_saida_prevista: string | null
+          fotos: Json
           id: string
           itens: Json
           modelo_aparelho: string | null
           numero: number
+          orcamento_origem_id: string | null
+          orcamento_origem_numero: number | null
           problema_relatado: string | null
           senha_tipo: string | null
           senha_valor: string | null
           status: string
           tecnico: string | null
+          tipo_dispositivo: string
           valor_total: number
         }
         Insert: {
@@ -188,15 +195,19 @@ export type Database = {
           created_at?: string
           data_entrada?: string
           data_saida_prevista?: string | null
+          fotos?: Json
           id?: string
           itens?: Json
           modelo_aparelho?: string | null
           numero?: number
+          orcamento_origem_id?: string | null
+          orcamento_origem_numero?: number | null
           problema_relatado?: string | null
           senha_tipo?: string | null
           senha_valor?: string | null
           status?: string
           tecnico?: string | null
+          tipo_dispositivo?: string
           valor_total?: number
         }
         Update: {
@@ -207,15 +218,19 @@ export type Database = {
           created_at?: string
           data_entrada?: string
           data_saida_prevista?: string | null
+          fotos?: Json
           id?: string
           itens?: Json
           modelo_aparelho?: string | null
           numero?: number
+          orcamento_origem_id?: string | null
+          orcamento_origem_numero?: number | null
           problema_relatado?: string | null
           senha_tipo?: string | null
           senha_valor?: string | null
           status?: string
           tecnico?: string | null
+          tipo_dispositivo?: string
           valor_total?: number
         }
         Relationships: [

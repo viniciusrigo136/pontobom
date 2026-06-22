@@ -28,6 +28,7 @@ export type ItemLinha = {
   descricao: string;
   qtd: number;
   preco: number;
+  estoque_id?: string | null;
 };
 
 export const calcTotal = (itens: ItemLinha[]) =>
@@ -38,4 +39,5 @@ export const novoItem = (): ItemLinha => ({
   descricao: "",
   qtd: 1,
   preco: 0,
+  estoque_id: null,
 });
