@@ -14,9 +14,11 @@ import { ClientePicker } from "@/components/ClientePicker";
 import { ItemsEditor } from "@/components/ItemsEditor";
 import { PatternLock } from "@/components/PatternLock";
 import { SignaturePad } from "@/components/SignaturePad";
+import { PhotoUploader } from "@/components/PhotoUploader";
 import { novoItem, calcTotal, type ItemLinha } from "@/lib/format";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Smartphone, Tablet, Laptop, Boxes } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/ordens/nova")({ component: NovaOS });
 
@@ -32,9 +34,27 @@ const CHECKLIST_ITEMS = [
   "Bateria (autonomia)", "Botões (power/volume)",
 ];
 
+const TIPOS = [
+  { value: "Celular", icon: Smartphone },
+  { value: "Tablet", icon: Tablet },
+  { value: "Notebook", icon: Laptop },
+  { value: "Outro", icon: Boxes },
+] as const;
+
+async function baixarEstoque(itens: ItemLinha[]) {
+  const usados = itens.filter((i) => i.estoque_id && (i.qtd || 0) > 0);
+  for (const it of usados) {
+    const { data } = await supabase.from("estoque").select("quantidade").eq("id", it.estoque_id!).single();
+    const atual = Number(data?.quantidade || 0);
+    const nova = Math.max(0, atual - (Number(it.qtd) || 0));
+    await supabase.from("estoque").update({ quantidade: nova }).eq("id", it.estoque_id!);
+  }
+}
+
 function NovaOS() {
   const navigate = useNavigate();
   const [clienteId, setClienteId] = useState<string | null>(null);
+  const [tipoDispositivo, setTipoDispositivo] = useState<string>("Celular");
   const [modelo, setModelo] = useState("");
   const [dataSaida, setDataSaida] = useState("");
   const [tecnico, setTecnico] = useState("");
@@ -47,6 +67,7 @@ function NovaOS() {
 
   const [itens, setItens] = useState<ItemLinha[]>([novoItem()]);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
+  const [fotos, setFotos] = useState<string[]>([]);
 
   const [assinaturaNome, setAssinaturaNome] = useState("");
   const [assinaturaImg, setAssinaturaImg] = useState("");
@@ -64,26 +85,33 @@ function NovaOS() {
     if (!clienteId) return toast.error("Selecione um cliente");
     if (!modelo.trim()) return toast.error("Informe o modelo do aparelho");
     setSaving(true);
+    const itensValidos = itens.filter((i) => i.descricao.trim());
     const { data, error } = await supabase
       .from("ordens_servico")
       .insert({
         cliente_id: clienteId,
+        tipo_dispositivo: tipoDispositivo,
         modelo_aparelho: modelo,
         data_saida_prevista: dataSaida || null,
         tecnico: tecnico || null,
         problema_relatado: problema || null,
         senha_tipo: registrarSenha ? senhaTipo : null,
         senha_valor: registrarSenha ? senhaValor : null,
-        itens: itens.filter((i) => i.descricao.trim()),
+        itens: itensValidos,
         valor_total: calcTotal(itens),
         checklist,
+        fotos,
         assinatura_cliente_nome: assinaturaNome || null,
         assinatura_cliente_imagem: assinaturaImg || null,
       })
       .select()
       .single();
+    if (error) {
+      setSaving(false);
+      return toast.error(error.message);
+    }
+    await baixarEstoque(itensValidos);
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(`OS #${data.numero} criada`);
     navigate({ to: "/ordens/$id", params: { id: data.id } });
   };
@@ -146,7 +174,7 @@ function NovaOS() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>4. Peças / Serviços</CardTitle></CardHeader>
+          <CardHeader><CardTitle>4. Peças / Produtos</CardTitle></CardHeader>
           <CardContent>
             <ItemsEditor itens={itens} onChange={setItens} />
           </CardContent>
@@ -155,11 +183,32 @@ function NovaOS() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>5. Checklist — Celular</span>
+              <span>5. Checklist do Aparelho</span>
               <Button type="button" variant="outline" size="sm" onClick={toggleAll}>Marcar todos como OK</Button>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {TIPOS.map((t) => {
+                const Icon = t.icon;
+                const active = tipoDispositivo === t.value;
+                return (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => setTipoDispositivo(t.value)}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition",
+                      active
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-foreground/40",
+                    )}
+                  >
+                    <Icon className="h-4 w-4" /> {t.value}
+                  </button>
+                );
+              })}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {CHECKLIST_ITEMS.map((it) => (
                 <label key={it} className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-accent">
@@ -175,7 +224,14 @@ function NovaOS() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>6. Assinatura do Cliente (opcional)</CardTitle></CardHeader>
+          <CardHeader><CardTitle>6. Fotos do Reparo</CardTitle></CardHeader>
+          <CardContent>
+            <PhotoUploader value={fotos} onChange={setFotos} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle>7. Assinatura do Cliente (opcional)</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             <div className="max-w-md">
               <Label>Nome de quem está assinando</Label>
