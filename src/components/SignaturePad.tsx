@@ -17,7 +17,7 @@ function useSignature(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = "#000";
     ctx.lineWidth = 2.2;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -82,7 +82,7 @@ function Pad({ height = 160, onChange }: { height?: number; onChange?: (dataUrl:
   return (
     <div className="space-y-2">
       <div
-        className="rounded-md border border-dashed border-border bg-secondary/30"
+        className="rounded-md border border-dashed border-border bg-white"
         style={{ height }}
       >
         <canvas
@@ -125,9 +125,9 @@ export function SignaturePad({
     <div className="space-y-2">
       <Pad onChange={onChange} />
       {value && (
-        <div className="rounded-md border border-border bg-card p-2">
+        <div className="rounded-md border border-border bg-white p-2">
           <p className="text-xs text-muted-foreground mb-1">Assinatura capturada:</p>
-          <img src={value} alt="assinatura" className="max-h-24 invert" />
+          <img src={value} alt="assinatura" className="max-h-24" />
         </div>
       )}
       <Dialog open={open} onOpenChange={setOpen}>

@@ -71,9 +71,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" className="dark" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('protechos.theme');var c=document.documentElement.classList;if(t==='light'){c.remove('dark');c.add('light');}else{c.add('dark');c.remove('light');}}catch(e){}})();`,
+          }}
+        />
       </head>
       <body>
         {children}

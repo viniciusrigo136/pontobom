@@ -43,6 +43,9 @@ export type Database = {
       }
       empresa: {
         Row: {
+          app_logo_url: string | null
+          app_subtitulo: string | null
+          app_titulo: string | null
           cnpj: string | null
           created_at: string
           email: string | null
@@ -57,6 +60,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          app_logo_url?: string | null
+          app_subtitulo?: string | null
+          app_titulo?: string | null
           cnpj?: string | null
           created_at?: string
           email?: string | null
@@ -71,6 +77,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          app_logo_url?: string | null
+          app_subtitulo?: string | null
+          app_titulo?: string | null
           cnpj?: string | null
           created_at?: string
           email?: string | null
