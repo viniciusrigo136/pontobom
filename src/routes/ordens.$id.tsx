@@ -45,7 +45,7 @@ function OSDetail() {
 
   const reload = async () => {
     const { data } = await supabase.from("ordens_servico").select("*").eq("id", id).single();
-    setOS(data as OS);
+    setOS(data as unknown as OS);
     if (data?.cliente_id) {
       const { data: c } = await supabase.from("clientes").select("nome,telefone,cpf").eq("id", data.cliente_id).single();
       setCliente(c);
