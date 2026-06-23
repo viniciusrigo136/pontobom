@@ -22,7 +22,10 @@ function NovaVenda() {
   const [itens, setItens] = useState<ItemLinha[]>([novoItem()]);
   const [garantia, setGarantia] = useState(3);
   const [dataVenda, setDataVenda] = useState(new Date().toISOString().slice(0, 10));
+  const [pagamento, setPagamento] = useState<PagamentoConfig>(novoPagamento(0));
   const [saving, setSaving] = useState(false);
+
+  const total = calcTotal(itens);
 
   const salvar = async () => {
     if (!clienteId) return toast.error("Selecione um cliente");
@@ -31,12 +34,26 @@ function NovaVenda() {
       cliente_id: clienteId,
       aparelho_produto: produto,
       itens: itens.filter((i) => i.descricao.trim()),
-      valor_total: calcTotal(itens),
+      valor_total: total,
       garantia_meses: Number(garantia) || 0,
       data_venda: dataVenda,
     }).select().single();
+    if (error) { setSaving(false); return toast.error(error.message); }
+    try {
+      await criarContasReceber({
+        clienteId,
+        origemTipo: "Venda",
+        origemId: data.id,
+        origemNumero: data.numero,
+        valorTotal: total,
+        descricao: `Venda #${data.numero}${produto ? ` — ${produto}` : ""}`,
+        pagamento,
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erro ao criar conta a receber";
+      toast.error(msg);
+    }
     setSaving(false);
-    if (error) return toast.error(error.message);
     toast.success(`Venda #${data.numero} criada`);
     navigate({ to: "/vendas/$id", params: { id: data.id } });
   };
