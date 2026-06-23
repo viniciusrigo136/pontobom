@@ -41,6 +41,65 @@ export type Database = {
         }
         Relationships: []
       }
+      contas_receber: {
+        Row: {
+          cliente_id: string | null
+          created_at: string
+          data_vencimento: string | null
+          descricao: string | null
+          id: string
+          origem_id: string | null
+          origem_numero: number | null
+          origem_tipo: string
+          parcela_numero: number | null
+          parcela_total: number | null
+          status: string
+          valor_pago: number
+          valor_restante: number
+          valor_total: number
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string
+          data_vencimento?: string | null
+          descricao?: string | null
+          id?: string
+          origem_id?: string | null
+          origem_numero?: number | null
+          origem_tipo?: string
+          parcela_numero?: number | null
+          parcela_total?: number | null
+          status?: string
+          valor_pago?: number
+          valor_restante?: number
+          valor_total?: number
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string
+          data_vencimento?: string | null
+          descricao?: string | null
+          id?: string
+          origem_id?: string | null
+          origem_numero?: number | null
+          origem_tipo?: string
+          parcela_numero?: number | null
+          parcela_total?: number | null
+          status?: string
+          valor_pago?: number
+          valor_restante?: number
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contas_receber_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       empresa: {
         Row: {
           app_logo_url: string | null
@@ -254,6 +313,41 @@ export type Database = {
             columns: ["cliente_id"]
             isOneToOne: false
             referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pagamentos_receber: {
+        Row: {
+          conta_id: string
+          created_at: string
+          data_pagamento: string
+          id: string
+          observacao: string | null
+          valor: number
+        }
+        Insert: {
+          conta_id: string
+          created_at?: string
+          data_pagamento?: string
+          id?: string
+          observacao?: string | null
+          valor?: number
+        }
+        Update: {
+          conta_id?: string
+          created_at?: string
+          data_pagamento?: string
+          id?: string
+          observacao?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pagamentos_receber_conta_id_fkey"
+            columns: ["conta_id"]
+            isOneToOne: false
+            referencedRelation: "contas_receber"
             referencedColumns: ["id"]
           },
         ]

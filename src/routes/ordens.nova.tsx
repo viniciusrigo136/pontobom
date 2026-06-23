@@ -15,7 +15,9 @@ import { ItemsEditor } from "@/components/ItemsEditor";
 import { PatternLock } from "@/components/PatternLock";
 import { SignaturePad } from "@/components/SignaturePad";
 import { PhotoUploader } from "@/components/PhotoUploader";
+import { PagamentoSection } from "@/components/PagamentoSection";
 import { novoItem, calcTotal, type ItemLinha } from "@/lib/format";
+import { novoPagamento, criarContasReceber, type PagamentoConfig } from "@/lib/financeiro";
 import { Eye, EyeOff, Smartphone, Tablet, Laptop, Boxes } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -72,7 +74,10 @@ function NovaOS() {
   const [assinaturaNome, setAssinaturaNome] = useState("");
   const [assinaturaImg, setAssinaturaImg] = useState("");
 
+  const [pagamento, setPagamento] = useState<PagamentoConfig>(novoPagamento(0));
   const [saving, setSaving] = useState(false);
+
+  const total = calcTotal(itens);
 
   const toggleAll = () => {
     const allOn = CHECKLIST_ITEMS.every((i) => checklist[i]);
@@ -111,6 +116,20 @@ function NovaOS() {
       return toast.error(error.message);
     }
     await baixarEstoque(itensValidos);
+    try {
+      await criarContasReceber({
+        clienteId,
+        origemTipo: "OS",
+        origemId: data.id,
+        origemNumero: data.numero,
+        valorTotal: total,
+        descricao: `OS #${data.numero} — ${modelo}`,
+        pagamento,
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erro ao criar conta a receber";
+      toast.error(msg);
+    }
     setSaving(false);
     toast.success(`OS #${data.numero} criada`);
     navigate({ to: "/ordens/$id", params: { id: data.id } });
@@ -240,6 +259,8 @@ function NovaOS() {
             <SignaturePad value={assinaturaImg} onChange={setAssinaturaImg} />
           </CardContent>
         </Card>
+
+        <PagamentoSection total={total} value={pagamento} onChange={setPagamento} title="8. Pagamento" />
 
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => navigate({ to: "/ordens" })}>Cancelar</Button>

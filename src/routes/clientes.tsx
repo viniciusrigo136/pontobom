@@ -11,6 +11,8 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { brl } from "@/lib/format";
+import { statusEfetivo } from "@/lib/financeiro";
 
 export const Route = createFileRoute("/clientes")({ component: ClientesPage });
 
@@ -19,19 +21,28 @@ type Cliente = { id: string; nome: string; telefone: string | null; cpf: string 
 function ClientesPage() {
   const [rows, setRows] = useState<Cliente[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [saldos, setSaldos] = useState<Record<string, number>>({});
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<Cliente> | null>(null);
   const [open, setOpen] = useState(false);
 
   const reload = async () => {
-    const [cli, os] = await Promise.all([
+    const [cli, os, contas] = await Promise.all([
       supabase.from("clientes").select("*").order("nome"),
       supabase.from("ordens_servico").select("cliente_id"),
+      supabase.from("contas_receber" as never).select("cliente_id,status,valor_restante,data_vencimento"),
     ]);
     setRows((cli.data || []) as Cliente[]);
     const c: Record<string, number> = {};
     for (const o of os.data || []) if (o.cliente_id) c[o.cliente_id] = (c[o.cliente_id] || 0) + 1;
     setCounts(c);
+    const sd: Record<string, number> = {};
+    for (const x of ((contas.data || []) as Array<{ cliente_id: string | null; status: string; valor_restante: number; data_vencimento: string | null }>)) {
+      if (!x.cliente_id) continue;
+      if (statusEfetivo(x) === "Quitado") continue;
+      sd[x.cliente_id] = (sd[x.cliente_id] || 0) + Number(x.valor_restante || 0);
+    }
+    setSaldos(sd);
   };
   useEffect(() => { reload(); }, []);
 
@@ -110,12 +121,13 @@ function ClientesPage() {
                 <TableHead className="hidden md:table-cell">CPF</TableHead>
                 <TableHead className="hidden md:table-cell">E-mail</TableHead>
                 <TableHead>OS</TableHead>
+                <TableHead className="text-right">Saldo devedor</TableHead>
                 <TableHead className="w-24" />
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.length === 0 && (
-                <TableRow><TableCell colSpan={6} className="text-center py-10 text-muted-foreground">Nenhum cliente.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center py-10 text-muted-foreground">Nenhum cliente.</TableCell></TableRow>
               )}
               {filtered.map((r) => (
                 <TableRow key={r.id}>
@@ -124,6 +136,9 @@ function ClientesPage() {
                   <TableCell className="hidden md:table-cell">{r.cpf || "—"}</TableCell>
                   <TableCell className="hidden md:table-cell">{r.email || "—"}</TableCell>
                   <TableCell>{counts[r.id] || 0}</TableCell>
+                  <TableCell className={`text-right font-medium ${saldos[r.id] ? "text-destructive" : "text-muted-foreground"}`}>
+                    {brl(saldos[r.id] || 0)}
+                  </TableCell>
                   <TableCell className="text-right space-x-1">
                     <Button variant="ghost" size="icon" onClick={() => { setEditing(r); setOpen(true); }}>
                       <Pencil className="h-4 w-4" />
