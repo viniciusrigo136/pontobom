@@ -112,6 +112,7 @@ function RootComponent() {
         </div>
         <Toaster position="top-right" />
       </SidebarProvider>
+      </LoginGate>
     </QueryClientProvider>
   );
 }
