@@ -62,6 +62,7 @@ function NovaVenda() {
             <div><Label>Data da venda</Label><Input type="date" value={dataVenda} onChange={(e) => setDataVenda(e.target.value)} /></div>
           </CardContent>
         </Card>
+        <PagamentoSection total={total} value={pagamento} onChange={setPagamento} />
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => navigate({ to: "/vendas" })}>Cancelar</Button>
           <Button onClick={salvar} disabled={saving}>{saving ? "Salvando..." : "Salvar Venda"}</Button>
