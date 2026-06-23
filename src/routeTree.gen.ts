@@ -13,6 +13,7 @@ import { Route as VendasRouteImport } from './routes/vendas'
 import { Route as OrdensRouteImport } from './routes/ordens'
 import { Route as OrcamentosRouteImport } from './routes/orcamentos'
 import { Route as EstoqueRouteImport } from './routes/estoque'
+import { Route as ContasReceberRouteImport } from './routes/contas-receber'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ClientesRouteImport } from './routes/clientes'
 import { Route as IndexRouteImport } from './routes/index'
@@ -44,6 +45,11 @@ const OrcamentosRoute = OrcamentosRouteImport.update({
 const EstoqueRoute = EstoqueRouteImport.update({
   id: '/estoque',
   path: '/estoque',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContasReceberRoute = ContasReceberRouteImport.update({
+  id: '/contas-receber',
+  path: '/contas-receber',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clientes'
     | '/configuracoes'
+    | '/contas-receber'
     | '/estoque'
     | '/orcamentos'
     | '/ordens'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clientes'
     | '/configuracoes'
+    | '/contas-receber'
     | '/estoque'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clientes'
     | '/configuracoes'
+    | '/contas-receber'
     | '/estoque'
     | '/orcamentos'
     | '/ordens'
@@ -217,6 +229,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ClientesRoute: typeof ClientesRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ContasReceberRoute: typeof ContasReceberRoute
   EstoqueRoute: typeof EstoqueRoute
   OrcamentosRoute: typeof OrcamentosRouteWithChildren
   OrdensRoute: typeof OrdensRouteWithChildren
@@ -251,6 +264,13 @@ declare module '@tanstack/react-router' {
       path: '/estoque'
       fullPath: '/estoque'
       preLoaderRoute: typeof EstoqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contas-receber': {
+      id: '/contas-receber'
+      path: '/contas-receber'
+      fullPath: '/contas-receber'
+      preLoaderRoute: typeof ContasReceberRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/configuracoes': {
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClientesRoute: ClientesRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
+  ContasReceberRoute: ContasReceberRoute,
   EstoqueRoute: EstoqueRoute,
   OrcamentosRoute: OrcamentosRouteWithChildren,
   OrdensRoute: OrdensRouteWithChildren,
