@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ClientePicker } from "@/components/ClientePicker";
 import { ItemsEditor } from "@/components/ItemsEditor";
+import { PagamentoSection } from "@/components/PagamentoSection";
 import { novoItem, calcTotal, type ItemLinha } from "@/lib/format";
+import { novoPagamento, criarContasReceber, type PagamentoConfig } from "@/lib/financeiro";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/vendas/nova")({ component: NovaVenda });
