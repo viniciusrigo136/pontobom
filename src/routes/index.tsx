@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, CheckCircle2, FileText, DollarSign } from "lucide-react";
+import { Wrench, CheckCircle2, FileText, DollarSign, AlertTriangle, Clock, TrendingUp } from "lucide-react";
 import { brl, fmtDate } from "@/lib/format";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PageHeader } from "@/components/PageHeader";
+import { statusEfetivo } from "@/lib/financeiro";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/")({
@@ -23,18 +24,19 @@ type OS = {
 };
 
 function Dashboard() {
-  const [stats, setStats] = useState({ abertas: 0, prontas: 0, orcPend: 0, vendaMes: 0 });
+  const [stats, setStats] = useState({ abertas: 0, prontas: 0, orcPend: 0, vendaMes: 0, aReceber: 0, vencido: 0, vencendo: 0 });
   const [statusCount, setStatusCount] = useState<{ status: string; total: number }[]>([]);
   const [ultimas, setUltimas] = useState<OS[]>([]);
   const [clientes, setClientes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     (async () => {
-      const [os, orc, vendas, clis] = await Promise.all([
+      const [os, orc, vendas, clis, contas] = await Promise.all([
         supabase.from("ordens_servico").select("id,numero,status,modelo_aparelho,valor_total,data_entrada,cliente_id").order("created_at", { ascending: false }),
         supabase.from("orcamentos").select("id,status"),
         supabase.from("vendas").select("valor_total,data_venda"),
         supabase.from("clientes").select("id,nome"),
+        supabase.from("contas_receber" as never).select("status,valor_restante,data_vencimento"),
       ]);
 
       const allOS = (os.data || []) as OS[];
@@ -49,7 +51,19 @@ function Dashboard() {
         })
         .reduce((s: number, v: { valor_total: number }) => s + Number(v.valor_total || 0), 0);
 
-      setStats({ abertas, prontas, orcPend, vendaMes });
+      const hoje = new Date().toISOString().slice(0, 10);
+      const semana = new Date(); semana.setDate(semana.getDate() + 7);
+      const semanaISO = semana.toISOString().slice(0, 10);
+      let aReceber = 0, vencido = 0, vencendo = 0;
+      for (const c of ((contas.data || []) as Array<{ status: string; valor_restante: number; data_vencimento: string | null }>)) {
+        const s = statusEfetivo(c);
+        if (s === "Quitado") continue;
+        aReceber += Number(c.valor_restante || 0);
+        if (s === "Vencido") vencido += Number(c.valor_restante || 0);
+        else if (c.data_vencimento && c.data_vencimento >= hoje && c.data_vencimento <= semanaISO) vencendo += Number(c.valor_restante || 0);
+      }
+
+      setStats({ abertas, prontas, orcPend, vendaMes, aReceber, vencido, vencendo });
 
       const counts: Record<string, number> = { Aguardando: 0, "Em andamento": 0, Pronto: 0, Entregue: 0 };
       for (const o of allOS) counts[o.status] = (counts[o.status] || 0) + 1;
@@ -66,11 +80,17 @@ function Dashboard() {
     <div>
       <PageHeader title="Dashboard" description="Visão geral da sua assistência técnica" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <StatCard label="OS abertas" value={stats.abertas} icon={Wrench} color="text-info" />
         <StatCard label="OS prontas para entrega" value={stats.prontas} icon={CheckCircle2} color="text-success" />
         <StatCard label="Orçamentos pendentes" value={stats.orcPend} icon={FileText} color="text-warning" />
         <StatCard label="Vendas do mês" value={brl(stats.vendaMes)} icon={DollarSign} color="text-primary" />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <StatCard label="Total a receber" value={brl(stats.aReceber)} icon={TrendingUp} color="text-info" />
+        <StatCard label="Vencido" value={brl(stats.vencido)} icon={AlertTriangle} color="text-destructive" />
+        <StatCard label="Vencendo esta semana" value={brl(stats.vencendo)} icon={Clock} color="text-warning" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
