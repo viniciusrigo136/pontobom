@@ -7,13 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ClientePicker } from "@/components/ClientePicker";
 import { ItemsEditor } from "@/components/ItemsEditor";
 import { PatternLock } from "@/components/PatternLock";
-import { SignaturePad } from "@/components/SignaturePad";
 import { PhotoUploader } from "@/components/PhotoUploader";
 import { PagamentoSection } from "@/components/PagamentoSection";
 import { novoItem, calcTotal, type ItemLinha } from "@/lib/format";
@@ -24,24 +22,14 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/ordens/nova")({ component: NovaOS });
 
-const CHECKLIST_ITEMS = [
-  "Tela funcionando", "Touch funcionando",
-  "Face ID / Biometria", "Câmera frontal",
-  "Câmera traseira", "Flash",
-  "Microfone", "Alto-falante",
-  "Auricular (ligação)", "Sensor de proximidade",
-  "Vibração", "Wi-Fi",
-  "Bluetooth", "Sinal / Rede",
-  "Leitor de chip / SIM", "Carregamento",
-  "Bateria (autonomia)", "Botões (power/volume)",
-];
-
 const TIPOS = [
   { value: "Celular", icon: Smartphone },
   { value: "Tablet", icon: Tablet },
   { value: "Notebook", icon: Laptop },
   { value: "Outro", icon: Boxes },
 ] as const;
+
+const GARANTIAS = ["Sem garantia", "30 dias", "90 dias", "6 meses", "1 ano"];
 
 async function baixarEstoque(itens: ItemLinha[]) {
   const usados = itens.filter((i) => i.estoque_id && (i.qtd || 0) > 0);
@@ -61,6 +49,7 @@ function NovaOS() {
   const [dataSaida, setDataSaida] = useState("");
   const [tecnico, setTecnico] = useState("");
   const [problema, setProblema] = useState("");
+  const [garantia, setGarantia] = useState("90 dias");
 
   const [registrarSenha, setRegistrarSenha] = useState(false);
   const [senhaTipo, setSenhaTipo] = useState<"senha" | "desenho">("senha");
@@ -68,23 +57,12 @@ function NovaOS() {
   const [verSenha, setVerSenha] = useState(false);
 
   const [itens, setItens] = useState<ItemLinha[]>([novoItem()]);
-  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [fotos, setFotos] = useState<string[]>([]);
-
-  const [assinaturaNome, setAssinaturaNome] = useState("");
-  const [assinaturaImg, setAssinaturaImg] = useState("");
 
   const [pagamento, setPagamento] = useState<PagamentoConfig>(novoPagamento(0));
   const [saving, setSaving] = useState(false);
 
   const total = calcTotal(itens);
-
-  const toggleAll = () => {
-    const allOn = CHECKLIST_ITEMS.every((i) => checklist[i]);
-    const next: Record<string, boolean> = {};
-    for (const i of CHECKLIST_ITEMS) next[i] = !allOn;
-    setChecklist(next);
-  };
 
   const salvar = async () => {
     if (!clienteId) return toast.error("Selecione um cliente");
@@ -100,14 +78,12 @@ function NovaOS() {
         data_saida_prevista: dataSaida || null,
         tecnico: tecnico || null,
         problema_relatado: problema || null,
+        garantia_texto: garantia,
         senha_tipo: registrarSenha ? senhaTipo : null,
         senha_valor: registrarSenha ? senhaValor : null,
         itens: itensValidos,
         valor_total: calcTotal(itens),
-        checklist,
         fotos,
-        assinatura_cliente_nome: assinaturaNome || null,
-        assinatura_cliente_imagem: assinaturaImg || null,
       })
       .select()
       .single();
@@ -150,10 +126,40 @@ function NovaOS() {
         <Card>
           <CardHeader><CardTitle>2. Aparelho</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="flex flex-wrap gap-2">
+              {TIPOS.map((t) => {
+                const Icon = t.icon;
+                const active = tipoDispositivo === t.value;
+                return (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => setTipoDispositivo(t.value)}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition",
+                      active
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-foreground/40",
+                    )}
+                  >
+                    <Icon className="h-4 w-4" /> {t.value}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
               <div><Label>Modelo do aparelho *</Label><Input value={modelo} onChange={(e) => setModelo(e.target.value)} placeholder="iPhone 13, Galaxy S22..." /></div>
               <div><Label>Data de saída prevista</Label><Input type="date" value={dataSaida} onChange={(e) => setDataSaida(e.target.value)} /></div>
               <div><Label>Técnico responsável</Label><Input value={tecnico} onChange={(e) => setTecnico(e.target.value)} /></div>
+              <div>
+                <Label>Prazo de garantia</Label>
+                <Select value={garantia} onValueChange={setGarantia}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {GARANTIAS.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div><Label>Problema relatado</Label><Textarea rows={3} value={problema} onChange={(e) => setProblema(e.target.value)} /></div>
           </CardContent>
@@ -200,67 +206,13 @@ function NovaOS() {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>5. Checklist do Aparelho</span>
-              <Button type="button" variant="outline" size="sm" onClick={toggleAll}>Marcar todos como OK</Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {TIPOS.map((t) => {
-                const Icon = t.icon;
-                const active = tipoDispositivo === t.value;
-                return (
-                  <button
-                    key={t.value}
-                    type="button"
-                    onClick={() => setTipoDispositivo(t.value)}
-                    className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition",
-                      active
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-foreground/40",
-                    )}
-                  >
-                    <Icon className="h-4 w-4" /> {t.value}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {CHECKLIST_ITEMS.map((it) => (
-                <label key={it} className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-accent">
-                  <Checkbox
-                    checked={!!checklist[it]}
-                    onCheckedChange={(c) => setChecklist({ ...checklist, [it]: !!c })}
-                  />
-                  <span className="text-sm">{it}</span>
-                </label>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader><CardTitle>6. Fotos do Reparo</CardTitle></CardHeader>
+          <CardHeader><CardTitle>5. Fotos do Reparo</CardTitle></CardHeader>
           <CardContent>
             <PhotoUploader value={fotos} onChange={setFotos} />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader><CardTitle>7. Assinatura do Cliente (opcional)</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            <div className="max-w-md">
-              <Label>Nome de quem está assinando</Label>
-              <Input value={assinaturaNome} onChange={(e) => setAssinaturaNome(e.target.value)} />
-            </div>
-            <SignaturePad value={assinaturaImg} onChange={setAssinaturaImg} />
-          </CardContent>
-        </Card>
-
-        <PagamentoSection total={total} value={pagamento} onChange={setPagamento} title="8. Pagamento" />
+        <PagamentoSection total={total} value={pagamento} onChange={setPagamento} title="6. Pagamento" />
 
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => navigate({ to: "/ordens" })}>Cancelar</Button>
