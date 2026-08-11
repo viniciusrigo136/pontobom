@@ -242,6 +242,12 @@ html.light { color-scheme: light; }
    IMPRESSÃO — TÉRMICA 80mm (CSS próprio, isolado do A4)
    ============================================================ */
 @media print {
+  body.print-mode-termica,
+  body.print-mode-termica main,
+  body.print-mode-termica #root {
+    min-height: 0 !important;
+    height: auto !important;
+  }
   body.print-mode-termica main { padding: 0 !important; }
   body.print-mode-termica .print-termica {
     display: block !important;
@@ -250,6 +256,8 @@ html.light { color-scheme: light; }
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    height: auto !important;
+    min-height: 0 !important;
     color: #000;
     background: #fff;
     font-family: "Courier New", ui-monospace, monospace;
@@ -263,21 +271,43 @@ html.light { color-scheme: light; }
     background: transparent !important;
     border: 0 !important;
   }
-  .termica-center { text-align: center; }
-  .termica-strong { font-weight: 700; }
-  .termica-title { font-size: 13px; font-weight: 700; }
-  .termica-total { font-size: 14px; font-weight: 700; }
-  .termica-sep {
-    border: 0 !important;
-    border-top: 1px dashed #000 !important;
-    margin: 4px 0;
-    height: 0;
-  }
-  .termica-row { display: flex; justify-content: space-between; gap: 4px; }
-  .termica-item { page-break-inside: avoid; break-inside: avoid; margin-bottom: 3px; }
+}
+
+/* Estilos térmicos compartilhados (impressão + medição de altura) */
+.termica-center { text-align: center; }
+.termica-strong { font-weight: 700; }
+.termica-title { font-size: 13px; font-weight: 700; }
+.termica-total { font-size: 14px; font-weight: 700; }
+.termica-sep {
+  border: 0 !important;
+  border-top: 1px dashed #000 !important;
+  margin: 4px 0;
+  height: 0;
+}
+.termica-row { display: flex; justify-content: space-between; gap: 4px; }
+.termica-item { page-break-inside: avoid; break-inside: avoid; margin-bottom: 3px; }
+
+/* Container invisível usado para medir a altura real do recibo */
+.print-termica.termica-measure {
+  display: block !important;
+  position: absolute !important;
+  left: -10000px !important;
+  top: 0 !important;
+  visibility: hidden !important;
+  width: 72mm;
+  max-width: 72mm;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  height: auto !important;
+  min-height: 0 !important;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 @media screen {
-  .print-only { display: none; }
+  .print-only:not(.termica-measure) { display: none; }
 }
+
 

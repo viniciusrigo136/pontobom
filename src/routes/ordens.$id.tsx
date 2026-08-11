@@ -34,21 +34,31 @@ function printAs(mode: "a4" | "termica") {
   body.classList.add(mode === "termica" ? "print-mode-termica" : "print-mode-a4");
 
   let styleEl: HTMLStyleElement | null = null;
+  const el = document.querySelector<HTMLElement>(".print-termica");
   if (mode === "termica") {
+    let alturaMm = 0;
+    if (el) {
+      el.classList.add("termica-measure");
+      const h = el.getBoundingClientRect().height;
+      el.classList.remove("termica-measure");
+      alturaMm = Math.ceil((h * 25.4) / 96) + 4; // px -> mm + folga
+    }
     styleEl = document.createElement("style");
-    styleEl.textContent = "@media print{@page{size:80mm auto;margin:3mm;}}";
+    styleEl.textContent = `@media print{@page{size:80mm ${alturaMm > 10 ? `${alturaMm}mm` : "auto"};margin:0;}html,body{height:auto!important;min-height:0!important;margin:0!important;}body.print-mode-termica .print-termica{padding:3mm!important;width:80mm!important;max-width:80mm!important;}}`;
     document.head.appendChild(styleEl);
   }
 
   const cleanup = () => {
     body.classList.remove("print-mode-a4", "print-mode-termica");
     if (styleEl) styleEl.remove();
+    el?.classList.remove("termica-measure");
     window.removeEventListener("afterprint", cleanup);
   };
   window.addEventListener("afterprint", cleanup);
   window.print();
   setTimeout(cleanup, 1500);
 }
+
 
 function OSDetail() {
   const { id } = Route.useParams();
@@ -289,18 +299,31 @@ function OSDetail() {
             </div>
           </div>
         </div>
+
+        <p className="mt-6 text-center text-xs">
+          Este comprovante é válido para garantia e não possui valor fiscal.
+        </p>
       </div>
 
       {/* ================= Impressão Térmica 80mm ================= */}
       <div className="print-only print-termica">
         <div className="termica-center termica-title">{empresa?.nome || "—"}</div>
         {empresa?.cnpj && <div className="termica-center">CNPJ: {empresa.cnpj}</div>}
+        {empresa?.endereco && <div className="termica-center">{empresa.endereco}</div>}
         {empresa?.telefone && <div className="termica-center">Tel/WhatsApp: {empresa.telefone}</div>}
         <hr className="termica-sep" />
-        <div className="termica-row"><span className="termica-strong">OS #{os.numero}</span><span>{fmtDate(new Date())}</span></div>
+        <div className="termica-row"><span className="termica-strong">ORDEM DE SERVIÇO</span><span className="termica-strong">#{os.numero}</span></div>
+        <div className="termica-row"><span>Entrada:</span><span>{fmtDate(os.data_entrada)}</span></div>
+        <div className="termica-row"><span>Emissão:</span><span>{fmtDateTime(new Date())}</span></div>
+        <hr className="termica-sep" />
         <div>Cliente: {cliente?.nome || "—"}</div>
+        <div>Telefone: {cliente?.telefone || "—"}</div>
+        <hr className="termica-sep" />
         <div>Aparelho: {os.modelo_aparelho || "—"}</div>
-        {os.problema_relatado && <div>Problema: {os.problema_relatado.slice(0, 120)}</div>}
+        <div>Saída prevista: {fmtDate(os.data_saida_prevista)}</div>
+        <div>Técnico: {os.tecnico || "—"}</div>
+        <div>Garantia: {os.garantia_texto || "Sem garantia"}</div>
+        {os.problema_relatado && <div>Problema: {os.problema_relatado}</div>}
         <hr className="termica-sep" />
         {itens.length === 0 && <div>Nenhum item.</div>}
         {itens.map((it, i) => (
@@ -315,11 +338,30 @@ function OSDetail() {
         <hr className="termica-sep" />
         <div className="termica-row termica-total"><span>TOTAL</span><span>{brl(os.valor_total)}</span></div>
         <div>Pagamento: {formaPagamento}</div>
-        {empresa?.pix_chave && <div>PIX: {empresa.pix_chave}</div>}
-        <div>Garantia: {os.garantia_texto || "Sem garantia"}</div>
+        {os.senha_tipo && (
+          <div>
+            Senha ({os.senha_tipo === "desenho" ? "padrão" : "senha"}): {os.senha_valor}
+          </div>
+        )}
+        {empresa?.pix_chave && (
+          <>
+            <hr className="termica-sep" />
+            <div className="termica-strong">PAGAMENTO VIA PIX</div>
+            <div>{empresa.pix_tipo || "Chave"}: {empresa.pix_chave}</div>
+            {empresa?.cnpj && <div>CNPJ: {empresa.cnpj}</div>}
+          </>
+        )}
         <hr className="termica-sep" />
-        <div className="termica-center">Obrigado pela preferência!</div>
+        <div style={{ marginTop: "24px" }} className="termica-center">
+          ______________________________
+        </div>
+        <div className="termica-center">Assinatura do Responsável</div>
+        <hr className="termica-sep" />
+        <div className="termica-center">
+          Este comprovante é válido para garantia e não possui valor fiscal.
+        </div>
       </div>
+
     </div>
   );
 }
