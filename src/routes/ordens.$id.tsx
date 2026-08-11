@@ -348,9 +348,9 @@ function OSDetail() {
             <hr className="termica-sep" />
             <div className="termica-strong">PAGAMENTO VIA PIX</div>
             <div>{empresa.pix_tipo || "Chave"}: {empresa.pix_chave}</div>
-            {empresa?.cnpj && <div>CNPJ: {empresa.cnpj}</div>}
           </>
         )}
+
         <hr className="termica-sep" />
         <div style={{ marginTop: "24px" }} className="termica-center">
           ______________________________
