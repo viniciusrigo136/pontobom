@@ -34,21 +34,31 @@ function printAs(mode: "a4" | "termica") {
   body.classList.add(mode === "termica" ? "print-mode-termica" : "print-mode-a4");
 
   let styleEl: HTMLStyleElement | null = null;
+  const el = document.querySelector<HTMLElement>(".print-termica");
   if (mode === "termica") {
+    let alturaMm = 0;
+    if (el) {
+      el.classList.add("termica-measure");
+      const h = el.getBoundingClientRect().height;
+      el.classList.remove("termica-measure");
+      alturaMm = Math.ceil((h * 25.4) / 96) + 4; // px -> mm + folga
+    }
     styleEl = document.createElement("style");
-    styleEl.textContent = "@media print{@page{size:80mm auto;margin:3mm;}}";
+    styleEl.textContent = `@media print{@page{size:80mm ${alturaMm > 10 ? `${alturaMm}mm` : "auto"};margin:0;}html,body{height:auto!important;min-height:0!important;margin:0!important;}body.print-mode-termica .print-termica{padding:3mm!important;width:80mm!important;max-width:80mm!important;}}`;
     document.head.appendChild(styleEl);
   }
 
   const cleanup = () => {
     body.classList.remove("print-mode-a4", "print-mode-termica");
     if (styleEl) styleEl.remove();
+    el?.classList.remove("termica-measure");
     window.removeEventListener("afterprint", cleanup);
   };
   window.addEventListener("afterprint", cleanup);
   window.print();
   setTimeout(cleanup, 1500);
 }
+
 
 function OSDetail() {
   const { id } = Route.useParams();
