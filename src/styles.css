@@ -220,7 +220,9 @@ html.light { color-scheme: light; }
   border: 1px solid color-mix(in oklch, var(--warning) 35%, transparent);
 }
 
-/* Print styles */
+/* ============================================================
+   IMPRESSÃO — A4 (padrão)
+   ============================================================ */
 @media print {
   @page { size: A4; margin: 14mm; }
   body { background: white !important; color: black !important; }
@@ -230,7 +232,52 @@ html.light { color-scheme: light; }
   .print-page:last-child { page-break-after: auto; }
   .print-force-break { page-break-before: always; }
   main { padding: 0 !important; }
+
+  /* Seleção de formato */
+  body.print-mode-a4 .print-termica { display: none !important; }
+  body.print-mode-termica .print-a4 { display: none !important; }
 }
+
+/* ============================================================
+   IMPRESSÃO — TÉRMICA 80mm (CSS próprio, isolado do A4)
+   ============================================================ */
+@media print {
+  body.print-mode-termica main { padding: 0 !important; }
+  body.print-mode-termica .print-termica {
+    display: block !important;
+    width: 72mm;
+    max-width: 72mm;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: #000;
+    background: #fff;
+    font-family: "Courier New", ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  body.print-mode-termica .print-termica * {
+    box-sizing: border-box;
+    max-width: 100%;
+    color: #000 !important;
+    background: transparent !important;
+    border: 0 !important;
+  }
+  .termica-center { text-align: center; }
+  .termica-strong { font-weight: 700; }
+  .termica-title { font-size: 13px; font-weight: 700; }
+  .termica-total { font-size: 14px; font-weight: 700; }
+  .termica-sep {
+    border: 0 !important;
+    border-top: 1px dashed #000 !important;
+    margin: 4px 0;
+    height: 0;
+  }
+  .termica-row { display: flex; justify-content: space-between; gap: 4px; }
+  .termica-item { page-break-inside: avoid; break-inside: avoid; margin-bottom: 3px; }
+}
+
 @media screen {
   .print-only { display: none; }
 }
+

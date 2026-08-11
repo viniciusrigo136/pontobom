@@ -247,6 +247,7 @@ export type Database = {
           data_entrada: string
           data_saida_prevista: string | null
           fotos: Json
+          garantia_texto: string | null
           id: string
           itens: Json
           modelo_aparelho: string | null
@@ -270,6 +271,7 @@ export type Database = {
           data_entrada?: string
           data_saida_prevista?: string | null
           fotos?: Json
+          garantia_texto?: string | null
           id?: string
           itens?: Json
           modelo_aparelho?: string | null
@@ -293,6 +295,7 @@ export type Database = {
           data_entrada?: string
           data_saida_prevista?: string | null
           fotos?: Json
+          garantia_texto?: string | null
           id?: string
           itens?: Json
           modelo_aparelho?: string | null
