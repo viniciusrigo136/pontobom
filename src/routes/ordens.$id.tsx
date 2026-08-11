@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Printer, Trash2, ArrowLeft } from "lucide-react";
+import { Printer, Receipt, Trash2, ArrowLeft } from "lucide-react";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
 import { useEmpresa, PrintHeader, PrintSection, PrintItemsTable } from "@/components/PrintHeader";
 import { toast } from "sonner";
@@ -22,19 +22,40 @@ type OS = {
   data_entrada: string; data_saida_prevista: string | null;
   itens: Array<{ descricao: string; qtd: number; preco: number }>;
   valor_total: number; senha_tipo: string | null; senha_valor: string | null;
-  checklist: Record<string, boolean>;
   fotos: string[];
+  garantia_texto: string | null;
   orcamento_origem_numero: number | null;
   orcamento_origem_id: string | null;
-  assinatura_cliente_nome: string | null; assinatura_cliente_imagem: string | null;
 };
 
+function printAs(mode: "a4" | "termica") {
+  const body = document.body;
+  body.classList.remove("print-mode-a4", "print-mode-termica");
+  body.classList.add(mode === "termica" ? "print-mode-termica" : "print-mode-a4");
+
+  let styleEl: HTMLStyleElement | null = null;
+  if (mode === "termica") {
+    styleEl = document.createElement("style");
+    styleEl.textContent = "@media print{@page{size:80mm auto;margin:3mm;}}";
+    document.head.appendChild(styleEl);
+  }
+
+  const cleanup = () => {
+    body.classList.remove("print-mode-a4", "print-mode-termica");
+    if (styleEl) styleEl.remove();
+    window.removeEventListener("afterprint", cleanup);
+  };
+  window.addEventListener("afterprint", cleanup);
+  window.print();
+  setTimeout(cleanup, 1500);
+}
 
 function OSDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [os, setOS] = useState<OS | null>(null);
   const [cliente, setCliente] = useState<{ nome: string; telefone: string | null; cpf: string | null } | null>(null);
+  const [formaPagamento, setFormaPagamento] = useState("À Vista");
   const empresa = useEmpresa();
 
   const reload = async () => {
@@ -43,6 +64,22 @@ function OSDetail() {
     if (data?.cliente_id) {
       const { data: c } = await supabase.from("clientes").select("nome,telefone,cpf").eq("id", data.cliente_id).single();
       setCliente(c);
+    }
+    const { data: contas } = await supabase
+      .from("contas_receber")
+      .select("valor_total,parcela_total,data_vencimento")
+      .eq("origem_tipo", "OS")
+      .eq("origem_id", id);
+    if (!contas || contas.length === 0) {
+      setFormaPagamento("À Vista");
+    } else {
+      const n = contas[0]?.parcela_total || contas.length;
+      const soma = contas.reduce((a, c) => a + Number(c.valor_total || 0), 0);
+      setFormaPagamento(
+        n > 1
+          ? `Fiado — ${n}x de ${brl(soma / n)}`
+          : `Fiado — ${brl(soma)}${contas[0]?.data_vencimento ? ` (venc. ${fmtDate(contas[0].data_vencimento)})` : ""}`,
+      );
     }
   };
   useEffect(() => { reload(); }, [id]);
@@ -63,6 +100,8 @@ function OSDetail() {
 
   if (!os) return <p className="text-muted-foreground">Carregando...</p>;
 
+  const itens = os.itens || [];
+
   return (
     <div>
       <div className="no-print">
@@ -81,7 +120,12 @@ function OSDetail() {
                   <SelectItem value="Entregue">Entregue</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" /> Imprimir</Button>
+              <Button variant="outline" onClick={() => printAs("a4")}>
+                <Printer className="mr-2 h-4 w-4" /> Imprimir A4
+              </Button>
+              <Button variant="outline" onClick={() => printAs("termica")}>
+                <Receipt className="mr-2 h-4 w-4" /> Imprimir Térmica (80mm)
+              </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="icon"><Trash2 className="h-4 w-4" /></Button>
@@ -142,6 +186,8 @@ function OSDetail() {
             <p><strong>Tipo:</strong> {os.tipo_dispositivo || "—"} · <strong>Modelo:</strong> {os.modelo_aparelho || "—"}</p>
             <p><strong>Problema:</strong> {os.problema_relatado || "—"}</p>
             <p><strong>Técnico:</strong> {os.tecnico || "—"}</p>
+            <p><strong>Garantia:</strong> {os.garantia_texto || "—"}</p>
+            <p><strong>Pagamento:</strong> {formaPagamento}</p>
             <p><strong>Entrada:</strong> {fmtDateTime(os.data_entrada)} · <strong>Saída prevista:</strong> {fmtDate(os.data_saida_prevista)}</p>
             {os.senha_tipo && (
               <p><strong>Senha do aparelho ({os.senha_tipo}):</strong> <span className="font-mono">{os.senha_valor}</span></p>
@@ -149,7 +195,7 @@ function OSDetail() {
             <div>
               <strong>Itens:</strong>
               <ul className="mt-1 space-y-1">
-                {os.itens?.map((it, i) => (
+                {itens.map((it, i) => (
                   <li key={i} className="text-muted-foreground">
                     {it.qtd}× {it.descricao} — {brl(it.preco * it.qtd)}
                   </li>
@@ -175,8 +221,8 @@ function OSDetail() {
         )}
       </div>
 
-      {/* Print view */}
-      <div className="print-only print-area text-black bg-white p-6">
+      {/* ================= Impressão A4 ================= */}
+      <div className="print-only print-area print-a4 text-black bg-white p-6">
         <PrintHeader
           empresa={empresa}
           rightTitle={`OS #${os.numero}`}
@@ -202,6 +248,7 @@ function OSDetail() {
               <div><div className="text-xs text-gray-600">Modelo</div><div className="font-semibold">{os.modelo_aparelho || "—"}</div></div>
               <div><div className="text-xs text-gray-600">Data de Saída</div><div className="font-semibold">{fmtDate(os.data_saida_prevista)}</div></div>
               <div><div className="text-xs text-gray-600">Técnico</div><div className="font-semibold">{os.tecnico || "—"}</div></div>
+              <div><div className="text-xs text-gray-600">Garantia</div><div className="font-semibold">{os.garantia_texto || "—"}</div></div>
             </div>
           </div>
         </div>
@@ -211,7 +258,11 @@ function OSDetail() {
         </PrintSection>
 
         <PrintSection title="Peças / Serviços">
-          <PrintItemsTable itens={os.itens || []} total={os.valor_total} />
+          <PrintItemsTable itens={itens} total={os.valor_total} />
+        </PrintSection>
+
+        <PrintSection title="Forma de Pagamento">
+          <div className="border border-gray-400 rounded px-3 py-2">{formaPagamento}</div>
         </PrintSection>
 
         {os.senha_tipo && (
@@ -231,21 +282,43 @@ function OSDetail() {
           </PrintSection>
         )}
 
-        <div className="mt-12 grid grid-cols-2 gap-12">
-          <div className="text-center">
-            <div className="border-t border-black pt-1">
-              {os.assinatura_cliente_imagem && (
-                <img src={os.assinatura_cliente_imagem} alt="" className="mx-auto h-16 -mt-14" />
-              )}
-              <p className="text-xs">Assinatura do Cliente {os.assinatura_cliente_nome ? `(${os.assinatura_cliente_nome})` : ""}</p>
-            </div>
-          </div>
-          <div className="text-center">
+        <div className="mt-12 flex justify-end">
+          <div className="text-center w-64">
             <div className="border-t border-black pt-1">
               <p className="text-xs">Assinatura do Responsável</p>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ================= Impressão Térmica 80mm ================= */}
+      <div className="print-only print-termica">
+        <div className="termica-center termica-title">{empresa?.nome || "—"}</div>
+        {empresa?.cnpj && <div className="termica-center">CNPJ: {empresa.cnpj}</div>}
+        {empresa?.telefone && <div className="termica-center">Tel/WhatsApp: {empresa.telefone}</div>}
+        <hr className="termica-sep" />
+        <div className="termica-row"><span className="termica-strong">OS #{os.numero}</span><span>{fmtDate(new Date())}</span></div>
+        <div>Cliente: {cliente?.nome || "—"}</div>
+        <div>Aparelho: {os.modelo_aparelho || "—"}</div>
+        {os.problema_relatado && <div>Problema: {os.problema_relatado.slice(0, 120)}</div>}
+        <hr className="termica-sep" />
+        {itens.length === 0 && <div>Nenhum item.</div>}
+        {itens.map((it, i) => (
+          <div key={i} className="termica-item">
+            <div>{it.descricao}</div>
+            <div className="termica-row">
+              <span>{it.qtd} x {brl(it.preco)}</span>
+              <span>{brl((it.preco || 0) * (it.qtd || 0))}</span>
+            </div>
+          </div>
+        ))}
+        <hr className="termica-sep" />
+        <div className="termica-row termica-total"><span>TOTAL</span><span>{brl(os.valor_total)}</span></div>
+        <div>Pagamento: {formaPagamento}</div>
+        {empresa?.pix_chave && <div>PIX: {empresa.pix_chave}</div>}
+        <div>Garantia: {os.garantia_texto || "Sem garantia"}</div>
+        <hr className="termica-sep" />
+        <div className="termica-center">Obrigado pela preferência!</div>
       </div>
     </div>
   );
