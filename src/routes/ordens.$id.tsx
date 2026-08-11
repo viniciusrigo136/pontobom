@@ -359,7 +359,7 @@ function OSDetail() {
         )}
 
         <hr className="termica-sep" />
-        <div style={{ marginTop: "24px" }} className="termica-center">
+        <div style={{ marginTop: "12px" }} className="termica-center">
           ______________________________
         </div>
         <div className="termica-center">Assinatura do Responsável</div>
