@@ -39,14 +39,21 @@ function printAs(mode: "a4" | "termica") {
     let alturaMm = 0;
     if (el) {
       el.classList.add("termica-measure");
-      const h = el.getBoundingClientRect().height;
+      const h = Math.max(el.getBoundingClientRect().height, el.scrollHeight);
       el.classList.remove("termica-measure");
-      alturaMm = Math.ceil((h * 25.4) / 96) + 4; // px -> mm + folga
+      alturaMm = Math.ceil((h * 25.4) / 96) + 2; // px -> mm + folga mínima
     }
+    const altura = alturaMm > 10 ? `${alturaMm}mm` : "auto";
     styleEl = document.createElement("style");
-    styleEl.textContent = `@media print{@page{size:80mm ${alturaMm > 10 ? `${alturaMm}mm` : "auto"};margin:0;}html,body{height:auto!important;min-height:0!important;margin:0!important;}body.print-mode-termica .print-termica{padding:3mm!important;width:80mm!important;max-width:80mm!important;}}`;
+    styleEl.textContent = `@media print{
+      @page{size:80mm ${altura};margin:0;}
+      html,body{height:${altura}!important;min-height:0!important;max-height:${altura}!important;margin:0!important;padding:0!important;overflow:hidden!important;}
+      body.print-mode-termica #root,body.print-mode-termica main{height:auto!important;min-height:0!important;overflow:visible!important;}
+      body.print-mode-termica .print-termica{padding:3mm!important;width:80mm!important;max-width:80mm!important;height:auto!important;overflow:hidden!important;}
+    }`;
     document.head.appendChild(styleEl);
   }
+
 
   const cleanup = () => {
     body.classList.remove("print-mode-a4", "print-mode-termica");
@@ -348,11 +355,11 @@ function OSDetail() {
             <hr className="termica-sep" />
             <div className="termica-strong">PAGAMENTO VIA PIX</div>
             <div>{empresa.pix_tipo || "Chave"}: {empresa.pix_chave}</div>
-            {empresa?.cnpj && <div>CNPJ: {empresa.cnpj}</div>}
           </>
         )}
+
         <hr className="termica-sep" />
-        <div style={{ marginTop: "24px" }} className="termica-center">
+        <div style={{ marginTop: "12px" }} className="termica-center">
           ______________________________
         </div>
         <div className="termica-center">Assinatura do Responsável</div>
