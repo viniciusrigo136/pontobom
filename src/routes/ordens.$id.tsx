@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Printer, Receipt, Trash2, ArrowLeft } from "lucide-react";
+import { Printer, Receipt, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
 import { useEmpresa, PrintHeader, PrintSection, PrintItemsTable } from "@/components/PrintHeader";
 import { toast } from "sonner";
@@ -74,6 +74,35 @@ function OSDetail() {
   const [cliente, setCliente] = useState<{ nome: string; telefone: string | null; cpf: string | null } | null>(null);
   const [formaPagamento, setFormaPagamento] = useState("À Vista");
   const empresa = useEmpresa();
+  const [enviandoTermica, setEnviandoTermica] = useState(false);
+  const [jobStatus, setJobStatus] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+
+  // Acompanha o trabalho de impressão enviado até o agente confirmar.
+  useEffect(() => {
+    if (!jobId || jobStatus === "printed" || jobStatus === "error") return;
+    const timer = setInterval(async () => {
+      const { data } = await supabase.from("print_jobs").select("status").eq("id", jobId).maybeSingle();
+      if (data?.status) setJobStatus(data.status);
+    }, 3000);
+    const stop = setTimeout(() => clearInterval(timer), 180000);
+    return () => { clearInterval(timer); clearTimeout(stop); };
+  }, [jobId, jobStatus]);
+
+  const imprimirTermicaRemota = async () => {
+    if (enviandoTermica) return;
+    setEnviandoTermica(true);
+    const { data, error } = await supabase
+      .from("print_jobs")
+      .insert({ os_id: id, printer_id: "POS80-01", status: "pending", created_by: "app" })
+      .select("id, status")
+      .single();
+    setEnviandoTermica(false);
+    if (error) return toast.error(error.message);
+    setJobId(data.id);
+    setJobStatus(data.status);
+    toast.success("OS enviada para a impressora.");
+  };
 
   const reload = async () => {
     const { data } = await supabase.from("ordens_servico").select("*").eq("id", id).single();
