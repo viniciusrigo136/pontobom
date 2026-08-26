@@ -10,6 +10,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Printer, Receipt, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
 import { useEmpresa, PrintHeader, PrintSection, PrintItemsTable } from "@/components/PrintHeader";
+import { ReciboTermicoView } from "@/components/ReciboTermicoView";
+import { buildReciboTermico } from "@/lib/recibo-termico";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/ordens/$id")({ component: OSDetail });
@@ -362,62 +364,16 @@ function OSDetail() {
         </p>
       </div>
 
-      {/* ================= Impressão Térmica 80mm ================= */}
-      <div className="print-only print-termica">
-        <div className="termica-center termica-title">{empresa?.nome || "—"}</div>
-        {empresa?.cnpj && <div className="termica-center">CNPJ: {empresa.cnpj}</div>}
-        {empresa?.endereco && <div className="termica-center">{empresa.endereco}</div>}
-        {empresa?.telefone && <div className="termica-center">Tel/WhatsApp: {empresa.telefone}</div>}
-        <hr className="termica-sep" />
-        <div className="termica-row"><span className="termica-strong">ORDEM DE SERVIÇO</span><span className="termica-strong">#{os.numero}</span></div>
-        <div className="termica-row"><span>Entrada:</span><span>{fmtDate(os.data_entrada)}</span></div>
-        <div className="termica-row"><span>Emissão:</span><span>{fmtDateTime(new Date())}</span></div>
-        <hr className="termica-sep" />
-        <div>Cliente: {cliente?.nome || "—"}</div>
-        <div>Telefone: {cliente?.telefone || "—"}</div>
-        <hr className="termica-sep" />
-        <div>Aparelho: {os.modelo_aparelho || "—"}</div>
-        <div>Saída prevista: {fmtDate(os.data_saida_prevista)}</div>
-        <div>Técnico: {os.tecnico || "—"}</div>
-        <div>Garantia: {os.garantia_texto || "Sem garantia"}</div>
-        {os.problema_relatado && <div>Problema: {os.problema_relatado}</div>}
-        <hr className="termica-sep" />
-        {itens.length === 0 && <div>Nenhum item.</div>}
-        {itens.map((it, i) => (
-          <div key={i} className="termica-item">
-            <div>{it.descricao}</div>
-            <div className="termica-row">
-              <span>{it.qtd} x {brl(it.preco)}</span>
-              <span>{brl((it.preco || 0) * (it.qtd || 0))}</span>
-            </div>
-          </div>
-        ))}
-        <hr className="termica-sep" />
-        <div className="termica-row termica-total"><span>TOTAL</span><span>{brl(os.valor_total)}</span></div>
-        <div>Pagamento: {formaPagamento}</div>
-        {os.senha_tipo && (
-          <div>
-            Senha ({os.senha_tipo === "desenho" ? "padrão" : "senha"}): {os.senha_valor}
-          </div>
-        )}
-        {empresa?.pix_chave && (
-          <>
-            <hr className="termica-sep" />
-            <div className="termica-strong">PAGAMENTO VIA PIX</div>
-            <div>{empresa.pix_tipo || "Chave"}: {empresa.pix_chave}</div>
-          </>
-        )}
+      {/* ================= Impressão Térmica 80mm (mesma fonte do envio remoto) ================= */}
+      <ReciboTermicoView
+        linhas={buildReciboTermico({
+          empresa: empresa ?? null,
+          os: { ...os, itens },
+          cliente,
+          formaPagamento,
+        })}
+      />
 
-        <hr className="termica-sep" />
-        <div style={{ marginTop: "12px" }} className="termica-center">
-          ______________________________
-        </div>
-        <div className="termica-center">Assinatura do Responsável</div>
-        <hr className="termica-sep" />
-        <div className="termica-center">
-          Este comprovante é válido para garantia e não possui valor fiscal.
-        </div>
-      </div>
 
     </div>
   );
