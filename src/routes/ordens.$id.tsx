@@ -172,6 +172,17 @@ function OSDetail() {
               <Button variant="outline" onClick={() => printAs("termica")}>
                 <Receipt className="mr-2 h-4 w-4" /> Imprimir Térmica (80mm)
               </Button>
+              <Button
+                onClick={imprimirTermicaRemota}
+                disabled={enviandoTermica}
+                className="min-h-11"
+              >
+                {enviandoTermica ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enviando para impressora...</>
+                ) : (
+                  <>🖨 Imprimir na térmica</>
+                )}
+              </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="icon"><Trash2 className="h-4 w-4" /></Button>
