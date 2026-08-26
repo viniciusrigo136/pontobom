@@ -37,77 +37,96 @@ HEADERS = {
 }
 
 
-def brl(v):
-    try:
-        return f"R$ {float(v or 0):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    except Exception:
-        return "R$ 0,00"
+ESC = b"\x1b"
+GS = b"\x1d"
+NEGRITO_ON = ESC + b"E\x01"
+NEGRITO_OFF = ESC + b"E\x00"
+AL_ESQ = ESC + b"a\x00"
+AL_CENTRO = ESC + b"a\x01"
 
 
-def linha(c="-"):
-    return c * WIDTH + "\n"
+def quebrar(texto, largura=WIDTH):
+    """Quebra texto longo sem cortar palavras."""
+    texto = str(texto or "")
+    linhas = []
+    for bruto in texto.split("\n"):
+        if not bruto.strip():
+            linhas.append("")
+            continue
+        linhas.extend(textwrap.wrap(bruto, largura, break_long_words=True) or [""])
+    return linhas
 
 
-def par(esq, dir_):
+def par(esq, dir_, largura=WIDTH):
+    """Esquerda + direita na mesma linha; se nao couber, quebra em duas."""
     esq, dir_ = str(esq), str(dir_)
-    espaco = max(1, WIDTH - len(esq) - len(dir_))
-    return esq + " " * espaco + dir_ + "\n"
+    if len(esq) + len(dir_) + 1 > largura:
+        saida = quebrar(esq, largura)
+        ultima = saida.pop() if saida else ""
+        if len(ultima) + len(dir_) + 1 <= largura:
+            saida.append(ultima + " " * (largura - len(ultima) - len(dir_)) + dir_)
+        else:
+            saida.append(ultima)
+            saida.append(" " * (largura - len(dir_)) + dir_)
+        return saida
+    return [esq + " " * (largura - len(esq) - len(dir_)) + dir_]
 
 
-def montar_cupom(payload):
-    os_ = payload.get("os") or {}
-    cli = payload.get("cliente") or {}
-    emp = payload.get("empresa") or {}
-    out = ""
-    if emp.get("nome"):
-        out += emp["nome"].center(WIDTH) + "\n"
-    for campo in ("cnpj", "endereco", "telefone"):
-        if emp.get(campo):
-            out += textwrap.fill(str(emp[campo]), WIDTH).center(WIDTH) + "\n"
-    out += linha("=")
-    out += par("ORDEM DE SERVICO", f"#{os_.get('numero', '')}")
-    out += par("Entrada:", str(os_.get("data_entrada", ""))[:10])
-    out += par("Status:", os_.get("status", ""))
-    out += linha()
-    out += f"Cliente: {cli.get('nome', '-')}\n"
-    out += f"Telefone: {cli.get('telefone', '-')}\n"
-    out += linha()
-    out += f"Aparelho: {os_.get('aparelho') or '-'}\n"
-    out += f"Tecnico: {os_.get('tecnico') or '-'}\n"
-    out += f"Garantia: {os_.get('garantia') or '-'}\n"
-    if os_.get("defeito_relatado"):
-        out += textwrap.fill(f"Problema: {os_['defeito_relatado']}", WIDTH) + "\n"
-    out += linha()
-    for item in os_.get("itens") or []:
-        out += textwrap.fill(str(item.get("descricao", "")), WIDTH) + "\n"
-        qtd, preco = item.get("qtd", 0), item.get("preco", 0)
-        out += par(f"{qtd} x {brl(preco)}", brl(float(qtd or 0) * float(preco or 0)))
-    out += linha()
-    if os_.get("desconto"):
-        out += par("Desconto", brl(os_["desconto"]))
-    out += par("TOTAL", brl(os_.get("valor_total")))
-    out += f"Pagamento: {os_.get('forma_pagamento', '-')}\n"
-    if os_.get("senha_valor"):
-        out += f"Senha ({os_.get('senha_tipo')}): {os_['senha_valor']}\n"
-    if emp.get("pix_chave"):
-        out += linha()
-        out += "PAGAMENTO VIA PIX\n"
-        out += f"{emp.get('pix_tipo') or 'Chave'}: {emp['pix_chave']}\n"
-    out += linha()
-    out += "\n\n" + "_" * 28 + "\n"
-    out += "Assinatura do Responsavel".center(WIDTH) + "\n"
-    out += linha()
-    out += textwrap.fill(
-        "Este comprovante e valido para garantia e nao possui valor fiscal.", WIDTH
-    ) + "\n"
-    return out
+def montar_escpos(payload):
+    """Converte as linhas do recibo (vindas do backend) em bytes ESC/POS.
+
+    O layout vem pronto do backend (src/lib/recibo-termico.ts), o mesmo usado
+    pela impressao termica da tela, entao o agente nao adivinha campos.
+    """
+    linhas = payload.get("recibo") or []
+    out = bytearray()
+    out += ESC + b"@"  # reset
+    out += AL_ESQ
+    alinhamento = "left"
+
+    def alinhar(destino):
+        nonlocal alinhamento
+        if destino != alinhamento:
+            out.extend(AL_CENTRO if destino == "center" else AL_ESQ)
+            alinhamento = destino
+
+    def escrever(texto, negrito=False):
+        if negrito:
+            out.extend(NEGRITO_ON)
+        out.extend(str(texto).encode("cp860", "replace") + b"\n")
+        if negrito:
+            out.extend(NEGRITO_OFF)
+
+    for ln in linhas:
+        tipo = ln.get("t")
+        negrito = bool(ln.get("bold"))
+        if tipo == "sep":
+            alinhar("left")
+            escrever("-" * WIDTH)
+        elif tipo == "blank":
+            out.extend(b"\n")
+        elif tipo == "center":
+            alinhar("center")
+            for parte in quebrar(ln.get("text", "")):
+                escrever(parte, negrito)
+        elif tipo == "row":
+            alinhar("left")
+            for parte in par(ln.get("left", ""), ln.get("right", "")):
+                escrever(parte, negrito)
+        else:  # left
+            alinhar("left")
+            for parte in quebrar(ln.get("text", "")):
+                escrever(parte, negrito)
+
+    alinhar("left")
+    out += b"\n\n\n" + GS + b"V\x00"  # avanca e corta
+    return bytes(out)
 
 
-def imprimir(texto):
-    """Envia o texto + comandos ESC/POS para a impressora USB via spooler do Windows."""
+def imprimir(dados):
+    """Envia os bytes ESC/POS para a impressora USB via spooler do Windows (RAW)."""
     import win32print
 
-    dados = b"\x1b\x40" + texto.encode("cp860", "replace") + b"\n\n\n" + b"\x1d\x56\x00"
     h = win32print.OpenPrinter(PRINTER_NAME)
     try:
         win32print.StartDocPrinter(h, 1, ("ProTechOS OS", None, "RAW"))
@@ -138,7 +157,7 @@ def loop():
 
             print("Novo trabalho:", job["id"])
             try:
-                imprimir(montar_cupom(data))
+                imprimir(montar_escpos(data))
                 body = {"job_id": job["id"], "status": "printed"}
             except Exception as e:  # falha de impressao
                 body = {"job_id": job["id"], "status": "error", "error": str(e)[:500]}
