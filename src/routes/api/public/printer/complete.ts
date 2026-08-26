@@ -4,7 +4,9 @@ function checkToken(request: Request): boolean {
   const expected = process.env["PRINTER_AGENT_TOKEN"];
   if (!expected) return false;
   const header = request.headers.get("authorization") ?? "";
-  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
+  const bearer = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
+  const alt = (request.headers.get("x-printer-token") ?? "").trim();
+  const token = bearer || alt;
   if (token.length !== expected.length) return false;
   let diff = 0;
   for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ expected.charCodeAt(i);
