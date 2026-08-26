@@ -9,11 +9,12 @@
  */
 
 export type LinhaRecibo =
-  | { t: "center"; text: string; bold?: boolean }
+  | { t: "center"; text: string; bold?: boolean; style?: "title" }
   | { t: "left"; text: string; bold?: boolean }
-  | { t: "row"; left: string; right: string; bold?: boolean }
+  | { t: "row"; left: string; right: string; bold?: boolean; style?: "total" }
+  | { t: "item"; description: string; quantity: string; total: string }
   | { t: "sep" }
-  | { t: "blank" };
+  | { t: "space"; dots: number };
 
 export type ReciboEmpresa = {
   nome?: string | null;
@@ -70,7 +71,7 @@ export function buildReciboTermico(params: {
   const emitidoEm = params.emitidoEm ?? new Date();
   const l: LinhaRecibo[] = [];
 
-  l.push({ t: "center", text: empresa?.nome || "—", bold: true });
+  l.push({ t: "center", text: empresa?.nome || "—", bold: true, style: "title" });
   if (empresa?.cnpj) l.push({ t: "center", text: `CNPJ: ${empresa.cnpj}` });
   if (empresa?.endereco) l.push({ t: "center", text: empresa.endereco });
   if (empresa?.telefone) l.push({ t: "center", text: `Tel/WhatsApp: ${empresa.telefone}` });
@@ -97,12 +98,16 @@ export function buildReciboTermico(params: {
   for (const it of itens) {
     const qtd = Number(it.qtd || 0);
     const preco = Number(it.preco || 0);
-    l.push({ t: "left", text: String(it.descricao || "") });
-    l.push({ t: "row", left: `${qtd} x ${brlRecibo(preco)}`, right: brlRecibo(qtd * preco) });
+    l.push({
+      t: "item",
+      description: String(it.descricao || ""),
+      quantity: `${qtd} x ${brlRecibo(preco)}`,
+      total: brlRecibo(qtd * preco),
+    });
   }
 
   l.push({ t: "sep" });
-  l.push({ t: "row", left: "TOTAL", right: brlRecibo(os.valor_total), bold: true });
+  l.push({ t: "row", left: "TOTAL", right: brlRecibo(os.valor_total), bold: true, style: "total" });
   l.push({ t: "left", text: `Pagamento: ${formaPagamento}` });
   if (os.senha_tipo) {
     const rotulo = os.senha_tipo === "desenho" ? "padrão" : "senha";
@@ -116,7 +121,7 @@ export function buildReciboTermico(params: {
   }
 
   l.push({ t: "sep" });
-  l.push({ t: "blank" });
+  l.push({ t: "space", dots: 12 });
   l.push({ t: "center", text: "______________________________" });
   l.push({ t: "center", text: "Assinatura do Responsável" });
   l.push({ t: "sep" });
