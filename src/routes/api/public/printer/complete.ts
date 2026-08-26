@@ -19,9 +19,10 @@ export const Route = createFileRoute("/api/public/printer/complete")({
           return Response.json({ error: "unauthorized" }, { status: 401 });
         }
 
-        let body: { job_id?: string; status?: string; error?: string } | null = null;
+        type Body = { job_id?: string; status?: string; error?: string };
+        let body: Body | null = null;
         try {
-          body = (await request.json()) as typeof body;
+          body = (await request.json()) as Body;
         } catch {
           body = null;
         }
