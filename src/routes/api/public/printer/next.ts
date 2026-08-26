@@ -110,6 +110,8 @@ async function handleNext({ request }: { request: Request }) {
 
 
   return Response.json({
+    // Layout térmico pronto (mesmo modelo da tela). O agente só renderiza.
+    recibo,
     job: {
       id: claimed.id,
       os_id: claimed.os_id,
