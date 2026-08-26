@@ -355,6 +355,50 @@ export type Database = {
           },
         ]
       }
+      print_jobs: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          os_id: string
+          printed_at: string | null
+          printer_id: string
+          status: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          os_id: string
+          printed_at?: string | null
+          printer_id?: string
+          status?: string
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          os_id?: string
+          printed_at?: string | null
+          printer_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "print_jobs_os_id_fkey"
+            columns: ["os_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_servico"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendas: {
         Row: {
           aparelho_produto: string | null
