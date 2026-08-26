@@ -202,6 +202,16 @@ function OSDetail() {
           }
         />
 
+        {jobStatus && (
+          <div className="mb-4 text-sm text-muted-foreground">
+            {jobStatus === "printed"
+              ? "✓ Impresso"
+              : jobStatus === "error"
+                ? "Erro na impressão"
+                : "Aguardando impressão"}
+          </div>
+        )}
+
         {os.orcamento_origem_numero && (
           <div className="mb-4 p-3 rounded-md bg-primary/10 border border-primary/30 text-sm">
             Gerado a partir do Orçamento{" "}
