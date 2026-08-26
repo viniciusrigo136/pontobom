@@ -19,14 +19,22 @@ import time
 import textwrap
 import requests
 
-BASE_URL = os.environ.get("PROTECHOS_URL", "https://pontobom.lovable.app").rstrip("/")
+# IMPORTANTE: use o dominio final (pontobomos.app). O endereco .lovable.app
+# redireciona (307) para o dominio customizado e o requests descarta o header
+# Authorization no redirecionamento, causando erro de autenticacao/HTML.
+BASE_URL = os.environ.get("PROTECHOS_URL", "https://pontobomos.app").rstrip("/")
 TOKEN = os.environ.get("PRINTER_TOKEN", "COLE_AQUI_O_TOKEN")
 PRINTER_ID = os.environ.get("PRINTER_ID", "POS80-01")
 PRINTER_NAME = os.environ.get("PRINTER_NAME", "POS80 Printer")
 POLL_SECONDS = 5
 WIDTH = 42  # colunas de 80mm em fonte A
 
-HEADERS = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+HEADERS = {
+    "Authorization": f"Bearer {TOKEN}",
+    "X-Printer-Token": TOKEN,
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+}
 
 
 def brl(v):
