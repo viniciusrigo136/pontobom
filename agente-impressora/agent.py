@@ -28,6 +28,7 @@ PRINTER_ID = os.environ.get("PRINTER_ID", "POS80-01")
 PRINTER_NAME = os.environ.get("PRINTER_NAME", "POS80 Printer")
 POLL_SECONDS = 5
 WIDTH = 42  # colunas de 80mm em fonte A
+EXPECTED_RECEIPT_VERSION = 2
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -43,6 +44,8 @@ NEGRITO_ON = ESC + b"E\x01"
 NEGRITO_OFF = ESC + b"E\x00"
 AL_ESQ = ESC + b"a\x00"
 AL_CENTRO = ESC + b"a\x01"
+ALTURA_NORMAL = GS + b"!\x00"
+ALTURA_DESTAQUE = GS + b"!\x10"
 
 
 def quebrar(texto, largura=WIDTH):
@@ -78,7 +81,11 @@ def montar_escpos(payload):
     O layout vem pronto do backend (src/lib/recibo-termico.ts), o mesmo usado
     pela impressao termica da tela, entao o agente nao adivinha campos.
     """
+    if payload.get("receipt_version") != EXPECTED_RECEIPT_VERSION:
+        raise ValueError("Modelo termico incompativel. Atualize o agente de impressao.")
     linhas = payload.get("recibo") or []
+    if not linhas:
+        raise ValueError("O backend nao enviou o modelo termico da OS.")
     out = bytearray()
     out += ESC + b"@"  # reset
     out += AL_ESQ
@@ -90,12 +97,16 @@ def montar_escpos(payload):
             out.extend(AL_CENTRO if destino == "center" else AL_ESQ)
             alinhamento = destino
 
-    def escrever(texto, negrito=False):
+    def escrever(texto, negrito=False, destaque=False):
+        if destaque:
+            out.extend(ALTURA_DESTAQUE)
         if negrito:
             out.extend(NEGRITO_ON)
         out.extend(str(texto).encode("cp860", "replace") + b"\n")
         if negrito:
             out.extend(NEGRITO_OFF)
+        if destaque:
+            out.extend(ALTURA_NORMAL)
 
     for ln in linhas:
         tipo = ln.get("t")
@@ -103,16 +114,26 @@ def montar_escpos(payload):
         if tipo == "sep":
             alinhar("left")
             escrever("-" * WIDTH)
-        elif tipo == "blank":
-            out.extend(b"\n")
+        elif tipo == "space":
+            alinhar("left")
+            pontos = max(0, min(255, int(ln.get("dots", 0))))
+            if pontos:
+                out.extend(ESC + b"J" + bytes([pontos]))
         elif tipo == "center":
             alinhar("center")
             for parte in quebrar(ln.get("text", "")):
-                escrever(parte, negrito)
+                escrever(parte, negrito, ln.get("style") == "title")
+        elif tipo == "item":
+            alinhar("left")
+            for parte in quebrar(ln.get("description", "")):
+                escrever(parte)
+            for parte in par(ln.get("quantity", ""), ln.get("total", "")):
+                escrever(parte)
+            out.extend(ESC + b"J\x03")
         elif tipo == "row":
             alinhar("left")
             for parte in par(ln.get("left", ""), ln.get("right", "")):
-                escrever(parte, negrito)
+                escrever(parte, negrito, ln.get("style") == "total")
         else:  # left
             alinhar("left")
             for parte in quebrar(ln.get("text", "")):
