@@ -10,6 +10,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Printer, Receipt, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
 import { useEmpresa, PrintHeader, PrintSection, PrintItemsTable } from "@/components/PrintHeader";
+import { ReciboTermicoView } from "@/components/ReciboTermicoView";
+import { buildReciboTermico } from "@/lib/recibo-termico";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/ordens/$id")({ component: OSDetail });
