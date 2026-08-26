@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildReciboTermico, brlRecibo, dataRecibo } from "@/lib/recibo-termico";
+
 
 function unauthorized() {
   return new Response(JSON.stringify({ error: "unauthorized" }), {
