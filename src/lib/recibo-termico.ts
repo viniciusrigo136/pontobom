@@ -39,6 +39,12 @@ export type ReciboOS = {
   itens?: Array<{ descricao?: string | null; qtd?: number | null; preco?: number | null }> | null;
 };
 
+export type ContaRecibo = {
+  valor_total?: number | string | null;
+  parcela_total?: number | null;
+  data_vencimento?: string | null;
+};
+
 const TZ = "America/Sao_Paulo";
 
 export const brlRecibo = (v: number | string | null | undefined) => {
@@ -59,6 +65,15 @@ export const dataHoraRecibo = (d: string | Date | null | undefined) => {
   if (isNaN(date.getTime())) return "—";
   return date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: TZ });
 };
+
+export function formaPagamentoRecibo(contas: ContaRecibo[] | null | undefined) {
+  if (!contas?.length) return "À Vista";
+  const parcelas = contas[0]?.parcela_total || contas.length;
+  const total = contas.reduce((soma, conta) => soma + Number(conta.valor_total || 0), 0);
+  return parcelas > 1
+    ? `Fiado — ${parcelas}x de ${brlRecibo(total / parcelas)}`
+    : `Fiado — ${brlRecibo(total)}${contas[0]?.data_vencimento ? ` (venc. ${dataRecibo(contas[0].data_vencimento)})` : ""}`;
+}
 
 export function buildReciboTermico(params: {
   empresa: ReciboEmpresa | null;

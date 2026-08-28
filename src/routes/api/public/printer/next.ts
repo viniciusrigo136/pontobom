@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { buildReciboTermico, brlRecibo, dataRecibo } from "@/lib/recibo-termico";
+import { buildReciboTermico, formaPagamentoRecibo } from "@/lib/recibo-termico";
 
 
 function unauthorized() {
@@ -90,22 +90,14 @@ async function handleNext({ request }: { request: Request }) {
   const subtotal = itens.reduce((a, it) => a + Number(it.preco || 0) * Number(it.qtd || 0), 0);
   const total = Number(os?.valor_total ?? subtotal);
 
-  // Mesma regra da tela da OS (src/routes/ordens.$id.tsx).
-  let forma_pagamento = "À Vista";
-  if (contas && contas.length > 0) {
-    const n = contas[0]?.parcela_total || contas.length;
-    const soma = contas.reduce((a, c) => a + Number(c.valor_total || 0), 0);
-    forma_pagamento =
-      n > 1
-        ? `Fiado — ${n}x de ${brlRecibo(soma / n)}`
-        : `Fiado — ${brlRecibo(soma)}${contas[0]?.data_vencimento ? ` (venc. ${dataRecibo(contas[0].data_vencimento)})` : ""}`;
-  }
+  const forma_pagamento = formaPagamentoRecibo(contas);
 
   const recibo = buildReciboTermico({
     empresa: empresa ?? null,
     os: (os ?? {}) as never,
     cliente,
     formaPagamento: forma_pagamento,
+    emitidoEm: new Date(claimed.created_at),
   });
 
 

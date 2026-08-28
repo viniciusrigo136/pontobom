@@ -11,7 +11,7 @@ import { Printer, Receipt, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { brl, fmtDate, fmtDateTime } from "@/lib/format";
 import { useEmpresa, PrintHeader, PrintSection, PrintItemsTable } from "@/components/PrintHeader";
 import { ReciboTermicoView } from "@/components/ReciboTermicoView";
-import { buildReciboTermico } from "@/lib/recibo-termico";
+import { buildReciboTermico, formaPagamentoRecibo } from "@/lib/recibo-termico";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/ordens/$id")({ component: OSDetail });
@@ -118,17 +118,7 @@ function OSDetail() {
       .select("valor_total,parcela_total,data_vencimento")
       .eq("origem_tipo", "OS")
       .eq("origem_id", id);
-    if (!contas || contas.length === 0) {
-      setFormaPagamento("À Vista");
-    } else {
-      const n = contas[0]?.parcela_total || contas.length;
-      const soma = contas.reduce((a, c) => a + Number(c.valor_total || 0), 0);
-      setFormaPagamento(
-        n > 1
-          ? `Fiado — ${n}x de ${brl(soma / n)}`
-          : `Fiado — ${brl(soma)}${contas[0]?.data_vencimento ? ` (venc. ${fmtDate(contas[0].data_vencimento)})` : ""}`,
-      );
-    }
+    setFormaPagamento(formaPagamentoRecibo(contas));
   };
   useEffect(() => { reload(); }, [id]);
 
