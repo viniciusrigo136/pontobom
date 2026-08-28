@@ -29,6 +29,8 @@ PRINTER_NAME = os.environ.get("PRINTER_NAME", "POS80 Printer")
 POLL_SECONDS = 5
 WIDTH = 42  # colunas de 80mm em fonte A
 EXPECTED_RECEIPT_VERSION = 2
+# Tabela ESC/POS 3 = PC860 (portugues) na POS80. Pode ser ajustada sem editar o agente.
+CODEPAGE = max(0, min(255, int(os.environ.get("PRINTER_CODEPAGE", "3"))))
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -88,6 +90,7 @@ def montar_escpos(payload):
         raise ValueError("O backend nao enviou o modelo termico da OS.")
     out = bytearray()
     out += ESC + b"@"  # reset
+    out += ESC + b"t" + bytes([CODEPAGE])
     out += AL_ESQ
     alinhamento = "left"
 
