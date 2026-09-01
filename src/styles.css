@@ -284,9 +284,9 @@ html.light { color-scheme: light; }
 
 /* Estilos térmicos compartilhados (impressão + medição de altura) */
 .termica-center { text-align: center; }
-.termica-strong { font-weight: 700; }
-.termica-title { font-size: 13px; font-weight: 700; }
-.termica-total { font-size: 14px; font-weight: 700; }
+.termica-strong { font-weight: 800; }
+.termica-title { font-size: 13px; font-weight: 800; }
+.termica-total { font-size: 14px; font-weight: 800; }
 .termica-sep {
   border: 0 !important;
   border-top: 1px dashed #000 !important;
