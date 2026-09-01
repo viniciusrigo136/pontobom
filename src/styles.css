@@ -260,24 +260,33 @@ html.light { color-scheme: light; }
     min-height: 0 !important;
     color: #000;
     background: #fff;
-    font-family: "Courier New", ui-monospace, monospace;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 11px;
+    font-weight: 500;
     line-height: 1.35;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   body.print-mode-termica .print-termica * {
     box-sizing: border-box;
     max-width: 100%;
     color: #000 !important;
+    opacity: 1 !important;
     background: transparent !important;
     border: 0 !important;
+  }
+  body.print-mode-termica .print-termica .termica-strong,
+  body.print-mode-termica .print-termica .termica-title,
+  body.print-mode-termica .print-termica .termica-total {
+    font-weight: 800 !important;
   }
 }
 
 /* Estilos térmicos compartilhados (impressão + medição de altura) */
 .termica-center { text-align: center; }
-.termica-strong { font-weight: 700; }
-.termica-title { font-size: 13px; font-weight: 700; }
-.termica-total { font-size: 14px; font-weight: 700; }
+.termica-strong { font-weight: 800; }
+.termica-title { font-size: 13px; font-weight: 800; }
+.termica-total { font-size: 14px; font-weight: 800; }
 .termica-sep {
   border: 0 !important;
   border-top: 1px dashed #000 !important;
@@ -301,8 +310,9 @@ html.light { color-scheme: light; }
   padding: 0;
   height: auto !important;
   min-height: 0 !important;
-  font-family: "Courier New", ui-monospace, monospace;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
+  font-weight: 500;
   line-height: 1.35;
 }
 
