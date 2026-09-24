@@ -16,6 +16,7 @@ import { Route as EstoqueRouteImport } from './routes/estoque'
 import { Route as ContasReceberRouteImport } from './routes/contas-receber'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as AtendenteIaRouteImport } from './routes/atendente-ia'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendasIndexRouteImport } from './routes/vendas.index'
 import { Route as OrdensIndexRouteImport } from './routes/ordens.index'
@@ -62,6 +63,11 @@ const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
 const ClientesRoute = ClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtendenteIaRoute = AtendenteIaRouteImport.update({
+  id: '/atendente-ia',
+  path: '/atendente-ia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -128,6 +134,7 @@ const ApiPublicPrinterCompleteRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/atendente-ia': typeof AtendenteIaRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/atendente-ia': typeof AtendenteIaRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
@@ -168,6 +176,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/atendente-ia': typeof AtendenteIaRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/atendente-ia'
     | '/clientes'
     | '/configuracoes'
     | '/contas-receber'
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/atendente-ia'
     | '/clientes'
     | '/configuracoes'
     | '/contas-receber'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/atendente-ia'
     | '/clientes'
     | '/configuracoes'
     | '/contas-receber'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AtendenteIaRoute: typeof AtendenteIaRoute
   ClientesRoute: typeof ClientesRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ContasReceberRoute: typeof ContasReceberRoute
@@ -312,6 +325,13 @@ declare module '@tanstack/react-router' {
       path: '/clientes'
       fullPath: '/clientes'
       preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/atendente-ia': {
+      id: '/atendente-ia'
+      path: '/atendente-ia'
+      fullPath: '/atendente-ia'
+      preLoaderRoute: typeof AtendenteIaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -449,6 +469,7 @@ const VendasRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AtendenteIaRoute: AtendenteIaRoute,
   ClientesRoute: ClientesRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ContasReceberRoute: ContasReceberRoute,
