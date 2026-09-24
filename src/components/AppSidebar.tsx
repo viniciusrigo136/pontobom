@@ -12,6 +12,7 @@ import {
   Smartphone,
   Moon,
   Sun,
+  Bot,
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,6 +37,7 @@ const items = [
   { title: "Contas a Receber", url: "/contas-receber", icon: DollarSign },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Estoque", url: "/estoque", icon: Boxes },
+  { title: "Atendente IA", url: "/atendente-ia", icon: Bot },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
 
