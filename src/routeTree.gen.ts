@@ -10,12 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VendasRouteImport } from './routes/vendas'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OrdensRouteImport } from './routes/ordens'
 import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as GarantiasRouteImport } from './routes/garantias'
 import { Route as EstoqueRouteImport } from './routes/estoque'
 import { Route as ContasReceberRouteImport } from './routes/contas-receber'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AtendenteIaRouteImport } from './routes/atendente-ia'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendasIndexRouteImport } from './routes/vendas.index'
@@ -35,6 +38,11 @@ const VendasRoute = VendasRouteImport.update({
   path: '/vendas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdensRoute = OrdensRouteImport.update({
   id: '/ordens',
   path: '/ordens',
@@ -43,6 +51,11 @@ const OrdensRoute = OrdensRouteImport.update({
 const OrcamentosRoute = OrcamentosRouteImport.update({
   id: '/orcamentos',
   path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GarantiasRoute = GarantiasRouteImport.update({
+  id: '/garantias',
+  path: '/garantias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EstoqueRoute = EstoqueRouteImport.update({
@@ -63,6 +76,11 @@ const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
 const ClientesRoute = ClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AtendenteIaRoute = AtendenteIaRouteImport.update({
@@ -135,12 +153,15 @@ const ApiPublicPrinterCompleteRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/atendente-ia': typeof AtendenteIaRoute
+  '/auth': typeof AuthRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
+  '/garantias': typeof GarantiasRoute
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/vendas': typeof VendasRouteWithChildren
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
@@ -157,10 +178,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/atendente-ia': typeof AtendenteIaRoute
+  '/auth': typeof AuthRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
+  '/garantias': typeof GarantiasRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
@@ -177,12 +201,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/atendente-ia': typeof AtendenteIaRoute
+  '/auth': typeof AuthRoute
   '/clientes': typeof ClientesRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
+  '/garantias': typeof GarantiasRoute
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/vendas': typeof VendasRouteWithChildren
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
@@ -201,12 +228,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/atendente-ia'
+    | '/auth'
     | '/clientes'
     | '/configuracoes'
     | '/contas-receber'
     | '/estoque'
+    | '/garantias'
     | '/orcamentos'
     | '/ordens'
+    | '/reset-password'
     | '/vendas'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
@@ -223,10 +253,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/atendente-ia'
+    | '/auth'
     | '/clientes'
     | '/configuracoes'
     | '/contas-receber'
     | '/estoque'
+    | '/garantias'
+    | '/reset-password'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
     | '/ordens/$id'
@@ -242,12 +275,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/atendente-ia'
+    | '/auth'
     | '/clientes'
     | '/configuracoes'
     | '/contas-receber'
     | '/estoque'
+    | '/garantias'
     | '/orcamentos'
     | '/ordens'
+    | '/reset-password'
     | '/vendas'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
@@ -265,12 +301,15 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AtendenteIaRoute: typeof AtendenteIaRoute
+  AuthRoute: typeof AuthRoute
   ClientesRoute: typeof ClientesRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ContasReceberRoute: typeof ContasReceberRoute
   EstoqueRoute: typeof EstoqueRoute
+  GarantiasRoute: typeof GarantiasRoute
   OrcamentosRoute: typeof OrcamentosRouteWithChildren
   OrdensRoute: typeof OrdensRouteWithChildren
+  ResetPasswordRoute: typeof ResetPasswordRoute
   VendasRoute: typeof VendasRouteWithChildren
   ApiPublicPrinterCompleteRoute: typeof ApiPublicPrinterCompleteRoute
   ApiPublicPrinterNextRoute: typeof ApiPublicPrinterNextRoute
@@ -285,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ordens': {
       id: '/ordens'
       path: '/ordens'
@@ -297,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/orcamentos'
       fullPath: '/orcamentos'
       preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/garantias': {
+      id: '/garantias'
+      path: '/garantias'
+      fullPath: '/garantias'
+      preLoaderRoute: typeof GarantiasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/estoque': {
@@ -325,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/clientes'
       fullPath: '/clientes'
       preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/atendente-ia': {
@@ -470,12 +530,15 @@ const VendasRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AtendenteIaRoute: AtendenteIaRoute,
+  AuthRoute: AuthRoute,
   ClientesRoute: ClientesRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ContasReceberRoute: ContasReceberRoute,
   EstoqueRoute: EstoqueRoute,
+  GarantiasRoute: GarantiasRoute,
   OrcamentosRoute: OrcamentosRouteWithChildren,
   OrdensRoute: OrdensRouteWithChildren,
+  ResetPasswordRoute: ResetPasswordRoute,
   VendasRoute: VendasRouteWithChildren,
   ApiPublicPrinterCompleteRoute: ApiPublicPrinterCompleteRoute,
   ApiPublicPrinterNextRoute: ApiPublicPrinterNextRoute,
