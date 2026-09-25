@@ -13,6 +13,7 @@ import { useEmpresa, PrintHeader, PrintSection, PrintItemsTable } from "@/compon
 import { ReciboTermicoView } from "@/components/ReciboTermicoView";
 import { buildReciboTermico, formaPagamentoRecibo } from "@/lib/recibo-termico";
 import { toast } from "sonner";
+import { useFotoUrls } from "@/lib/fotos";
 
 export const Route = createFileRoute("/ordens/$id")({ component: OSDetail });
 
@@ -73,6 +74,7 @@ function OSDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [os, setOS] = useState<OS | null>(null);
+  const resolveFoto = useFotoUrls(os?.fotos ?? []);
   const [cliente, setCliente] = useState<{ nome: string; telefone: string | null; cpf: string | null } | null>(null);
   const [formaPagamento, setFormaPagamento] = useState("À Vista");
   const empresa = useEmpresa();
@@ -270,8 +272,8 @@ function OSDetail() {
             <CardContent>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {os.fotos.map((url) => (
-                  <a key={url} href={url} target="_blank" rel="noreferrer" className="aspect-square rounded-md overflow-hidden border border-border bg-muted">
-                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  <a key={url} href={resolveFoto(url) || undefined} target="_blank" rel="noreferrer" className="aspect-square rounded-md overflow-hidden border border-border bg-muted">
+                    {resolveFoto(url) && <img src={resolveFoto(url)} alt="" className="w-full h-full object-cover" />}
                   </a>
                 ))}
               </div>

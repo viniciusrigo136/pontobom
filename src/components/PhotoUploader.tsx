@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Camera, X } from "lucide-react";
 import { toast } from "sonner";
+import { fotoRef, useFotoUrls } from "@/lib/fotos";
 
 export function PhotoUploader({
   value,
@@ -28,8 +29,7 @@ export function PhotoUploader({
         toast.error(`Falha ao enviar ${f.name}: ${error.message}`);
         continue;
       }
-      const { data } = await supabase.storage.from("protechos").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
-      if (data?.signedUrl) uploaded.push(data.signedUrl);
+      uploaded.push(fotoRef(path));
     }
     if (uploaded.length) {
       onChange([...value, ...uploaded]);
@@ -39,6 +39,7 @@ export function PhotoUploader({
   };
 
   const remove = (url: string) => onChange(value.filter((u) => u !== url));
+  const resolve = useFotoUrls(value);
 
   return (
     <div className="space-y-3">
@@ -54,7 +55,7 @@ export function PhotoUploader({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {value.map((url) => (
           <div key={url} className="relative group aspect-square rounded-md overflow-hidden border border-border bg-muted">
-            <img src={url} alt="" className="w-full h-full object-cover" />
+            {resolve(url) && <img src={resolve(url)} alt="" className="w-full h-full object-cover" />}
             <button
               type="button"
               onClick={() => remove(url)}
