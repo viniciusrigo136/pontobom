@@ -72,7 +72,8 @@ function GarantiasPage() {
   };
 
   const alternar = async (r: Regra, campo: "ativo" | "aprovado_bot") => {
-    const { error } = await supabase.from("garantia_regras").update({ [campo]: !r[campo] }).eq("id", r.id);
+    const patch = campo === "ativo" ? { ativo: !r.ativo } : { aprovado_bot: !r.aprovado_bot };
+    const { error } = await supabase.from("garantia_regras").update(patch).eq("id", r.id);
     if (error) return toast.error("Apenas o proprietário pode alterar regras");
     load();
   };
