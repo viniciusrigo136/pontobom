@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      bot_nonces: {
+        Row: {
+          created_at: string
+          nonce: string
+        }
+        Insert: {
+          created_at?: string
+          nonce: string
+        }
+        Update: {
+          created_at?: string
+          nonce?: string
+        }
+        Relationships: []
+      }
+      bot_rate_limit: {
+        Row: {
+          chave: string
+          contador: number
+          janela: string
+        }
+        Insert: {
+          chave: string
+          contador?: number
+          janela: string
+        }
+        Update: {
+          chave?: string
+          contador?: number
+          janela?: string
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           cpf: string | null
@@ -502,6 +535,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bot_buscar_estoque: {
+        Args: { _termo: string }
+        Returns: {
+          disponivel: boolean
+          nome: string
+          preco_venda: number
+        }[]
+      }
+      bot_buscar_garantia: {
+        Args: { _termo: string }
+        Returns: {
+          descricao: string
+          prazo_dias: number
+          tipo_servico: string
+        }[]
+      }
+      bot_consume_nonce: { Args: { _nonce: string }; Returns: boolean }
+      bot_norm: { Args: { _t: string }; Returns: string }
+      bot_palavras: { Args: { _termo: string }; Returns: string[] }
+      bot_rate_hit: {
+        Args: { _chave: string; _limite: number }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
