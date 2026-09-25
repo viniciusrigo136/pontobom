@@ -32,6 +32,7 @@ import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
 import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
 import { Route as ApiPublicPrinterNextRouteImport } from './routes/api/public/printer/next'
 import { Route as ApiPublicPrinterCompleteRouteImport } from './routes/api/public/printer/complete'
+import { Route as ApiPublicBotConsultaRouteImport } from './routes/api/public/bot/consulta'
 
 const VendasRoute = VendasRouteImport.update({
   id: '/vendas',
@@ -149,6 +150,11 @@ const ApiPublicPrinterCompleteRoute =
     path: '/api/public/printer/complete',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBotConsultaRoute = ApiPublicBotConsultaRouteImport.update({
+  id: '/api/public/bot/consulta',
+  path: '/api/public/bot/consulta',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/orcamentos/': typeof OrcamentosIndexRoute
   '/ordens/': typeof OrdensIndexRoute
   '/vendas/': typeof VendasIndexRoute
+  '/api/public/bot/consulta': typeof ApiPublicBotConsultaRoute
   '/api/public/printer/complete': typeof ApiPublicPrinterCompleteRoute
   '/api/public/printer/next': typeof ApiPublicPrinterNextRoute
 }
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/orcamentos': typeof OrcamentosIndexRoute
   '/ordens': typeof OrdensIndexRoute
   '/vendas': typeof VendasIndexRoute
+  '/api/public/bot/consulta': typeof ApiPublicBotConsultaRoute
   '/api/public/printer/complete': typeof ApiPublicPrinterCompleteRoute
   '/api/public/printer/next': typeof ApiPublicPrinterNextRoute
 }
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/orcamentos/': typeof OrcamentosIndexRoute
   '/ordens/': typeof OrdensIndexRoute
   '/vendas/': typeof VendasIndexRoute
+  '/api/public/bot/consulta': typeof ApiPublicBotConsultaRoute
   '/api/public/printer/complete': typeof ApiPublicPrinterCompleteRoute
   '/api/public/printer/next': typeof ApiPublicPrinterNextRoute
 }
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/orcamentos/'
     | '/ordens/'
     | '/vendas/'
+    | '/api/public/bot/consulta'
     | '/api/public/printer/complete'
     | '/api/public/printer/next'
   fileRoutesByTo: FileRoutesByTo
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/orcamentos'
     | '/ordens'
     | '/vendas'
+    | '/api/public/bot/consulta'
     | '/api/public/printer/complete'
     | '/api/public/printer/next'
   id:
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/orcamentos/'
     | '/ordens/'
     | '/vendas/'
+    | '/api/public/bot/consulta'
     | '/api/public/printer/complete'
     | '/api/public/printer/next'
   fileRoutesById: FileRoutesById
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   OrdensRoute: typeof OrdensRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   VendasRoute: typeof VendasRouteWithChildren
+  ApiPublicBotConsultaRoute: typeof ApiPublicBotConsultaRoute
   ApiPublicPrinterCompleteRoute: typeof ApiPublicPrinterCompleteRoute
   ApiPublicPrinterNextRoute: typeof ApiPublicPrinterNextRoute
 }
@@ -478,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPrinterCompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bot/consulta': {
+      id: '/api/public/bot/consulta'
+      path: '/api/public/bot/consulta'
+      fullPath: '/api/public/bot/consulta'
+      preLoaderRoute: typeof ApiPublicBotConsultaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -540,6 +560,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrdensRoute: OrdensRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   VendasRoute: VendasRouteWithChildren,
+  ApiPublicBotConsultaRoute: ApiPublicBotConsultaRoute,
   ApiPublicPrinterCompleteRoute: ApiPublicPrinterCompleteRoute,
   ApiPublicPrinterNextRoute: ApiPublicPrinterNextRoute,
 }

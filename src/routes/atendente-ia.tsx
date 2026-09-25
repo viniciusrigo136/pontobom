@@ -59,10 +59,10 @@ function AtendenteIAPage() {
       </Card>
 
       <Secao icon={ShieldAlert} title="Checklist de segurança">
-        <p>✔ Autenticação real preparada (ainda desligada).</p>
-        <p>⏳ Usuários reais pendentes — nenhum proprietário criado.</p>
-        <p>⚠ Regras públicas do banco ainda ativas.</p>
-        <p>⛔ Consulta do bot ainda bloqueada — nenhum endpoint criado.</p>
+        <p>✔ Fase de segurança concluída (login real, banco e fotos só para a equipe).</p>
+        <p>✔ API de consulta preparada (somente leitura: nome, disponibilidade, preço de venda e garantias aprovadas).</p>
+        <p>⏳ Segredo HMAC pendente — cadastrar pelo proprietário.</p>
+        <p>⛔ n8n / WhatsApp ainda desconectados.</p>
       </Secao>
 
       <div className="grid gap-4 md:grid-cols-2">
