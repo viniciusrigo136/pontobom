@@ -1,0 +1,11 @@
+DROP POLICY IF EXISTS "Public access clientes" ON public.clientes;
+DROP POLICY IF EXISTS "Public access contas_receber" ON public.contas_receber;
+DROP POLICY IF EXISTS "Public access empresa" ON public.empresa;
+DROP POLICY IF EXISTS "Public access estoque" ON public.estoque;
+DROP POLICY IF EXISTS "Public access orc" ON public.orcamentos;
+DROP POLICY IF EXISTS "Public access os" ON public.ordens_servico;
+DROP POLICY IF EXISTS "Public access pagamentos_receber" ON public.pagamentos_receber;
+DROP POLICY IF EXISTS "Public access vendas" ON public.vendas;
+REVOKE ALL ON public.clientes, public.contas_receber, public.empresa, public.estoque, public.orcamentos, public.ordens_servico, public.pagamentos_receber, public.vendas FROM anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.clientes, public.contas_receber, public.empresa, public.estoque, public.orcamentos, public.ordens_servico, public.pagamentos_receber, public.vendas TO authenticated;
+GRANT ALL ON public.clientes, public.contas_receber, public.empresa, public.estoque, public.orcamentos, public.ordens_servico, public.pagamentos_receber, public.vendas TO service_role;
