@@ -74,6 +74,7 @@ function OSDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [os, setOS] = useState<OS | null>(null);
+  const resolveFoto = useFotoUrls(os?.fotos ?? []);
   const [cliente, setCliente] = useState<{ nome: string; telefone: string | null; cpf: string | null } | null>(null);
   const [formaPagamento, setFormaPagamento] = useState("À Vista");
   const empresa = useEmpresa();
