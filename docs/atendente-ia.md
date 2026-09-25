@@ -40,3 +40,23 @@ Conclusão: não há política geral por serviço. Bot não informa garantia at�
 - [ ] Backups de volumes
 - [ ] Chip novo cadastrado; teste de pausa do bot ao responder manualmente
 - [ ] Horários e feriados configurados (America/Sao_Paulo)
+
+## Fase 3 — API do bot (preparada, n8n NÃO conectado)
+URL: `POST https://pontobomos.app/api/public/bot/consulta` (preview: `https://id-preview--9c1c533c-dae8-428d-b53b-0071a97fcfb0.lovable.app/api/public/bot/consulta`; só existe no site no ar após publicar).
+
+Segredo: `BOT_HMAC_SECRET` (Project Settings → Secrets). Sem ele → 503. O mesmo valor vai numa credencial do n8n.
+
+Headers: `Content-Type: application/json`, `X-Bot-Timestamp` (epoch s), `X-Bot-Nonce` (16–128 chars `[A-Za-z0-9_-]`, único), `X-Bot-Signature` = hex HMAC-SHA256(segredo, `timestamp + "." + nonce + "." + corpo_bruto`).
+Corpo (≤2 KB): `{"tipo":"estoque"|"garantia","termo":"2..80 chars"}`.
+Respostas: 200 `{tipo:"estoque",itens:[{nome,disponivel,preco_venda|null}],encaminhar}` / `{tipo:"garantia",regras:[{tipo_servico,descricao,prazo_dias}],encaminhar}`; 400, 401, 405, 413, 415, 429 (30/min), 503.
+
+Exemplo n8n (Code node, segredo vem de credencial, nunca fixo):
+```js
+const crypto = require('crypto');
+const body = JSON.stringify({ tipo: 'estoque', termo: 'tela iphone 11' });
+const ts = String(Math.floor(Date.now()/1000));
+const nonce = crypto.randomBytes(16).toString('hex');
+const sig = crypto.createHmac('sha256', SEGREDO).update(`${ts}.${nonce}.${body}`).digest('hex');
+// enviar exatamente `body` como corpo bruto
+```
+Rollback: `supabase/rollback/fase3_rollback.sql`.
