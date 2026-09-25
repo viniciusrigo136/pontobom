@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { USE_SUPABASE_AUTH } from "@/lib/auth-mode";
 import { LoginGate, logout as legacyLogout } from "@/components/LoginGate";
@@ -48,7 +48,11 @@ function SupabaseGate({ children }: { children: ReactNode }) {
   );
 }
 
+export const PUBLIC_AUTH_PATHS = ["/auth", "/reset-password"];
+
 export function AuthGate({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (USE_SUPABASE_AUTH && PUBLIC_AUTH_PATHS.includes(pathname)) return <>{children}</>;
   return USE_SUPABASE_AUTH ? <SupabaseGate>{children}</SupabaseGate> : <LoginGate>{children}</LoginGate>;
 }
 
