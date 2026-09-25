@@ -5,6 +5,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -13,7 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Toaster } from "@/components/ui/sonner";
-import { LoginGate } from "@/components/LoginGate";
+import { AuthGate } from "@/components/AuthGate";
 
 function NotFoundComponent() {
   return (
@@ -94,9 +95,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (pathname === "/auth" || pathname === "/reset-password") {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+        <Toaster position="top-right" />
+      </QueryClientProvider>
+    );
+  }
   return (
     <QueryClientProvider client={queryClient}>
-      <LoginGate>
+      <AuthGate>
       <SidebarProvider>
         <AppSidebar />
         <div className="flex-1 flex flex-col min-h-screen">
@@ -112,7 +122,7 @@ function RootComponent() {
         </div>
         <Toaster position="top-right" />
       </SidebarProvider>
-      </LoginGate>
+      </AuthGate>
     </QueryClientProvider>
   );
 }

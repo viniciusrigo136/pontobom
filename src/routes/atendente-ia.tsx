@@ -58,6 +58,13 @@ function AtendenteIAPage() {
         </CardContent>
       </Card>
 
+      <Secao icon={ShieldAlert} title="Checklist de segurança">
+        <p>✔ Autenticação real preparada (ainda desligada).</p>
+        <p>⏳ Usuários reais pendentes — nenhum proprietário criado.</p>
+        <p>⚠ Regras públicas do banco ainda ativas.</p>
+        <p>⛔ Consulta do bot ainda bloqueada — nenhum endpoint criado.</p>
+      </Secao>
+
       <div className="grid gap-4 md:grid-cols-2">
         <Secao icon={Clock} title="Horário (America/Sao_Paulo)">
           <p>Seg–Sex: 07:30–11:30 e 13:30–18:00</p>

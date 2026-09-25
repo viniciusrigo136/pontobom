@@ -13,7 +13,10 @@ import {
   Moon,
   Sun,
   Bot,
+  LogOut,
+  ShieldCheck,
 } from "lucide-react";
+import { signOutApp } from "@/components/AuthGate";
 import {
   Sidebar,
   SidebarContent,
@@ -38,6 +41,7 @@ const items = [
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Estoque", url: "/estoque", icon: Boxes },
   { title: "Atendente IA", url: "/atendente-ia", icon: Bot },
+  { title: "Regras de Garantia", url: "/garantias", icon: ShieldCheck },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
 
@@ -101,6 +105,12 @@ export function AppSidebar() {
             <SidebarMenuButton onClick={toggle} tooltip={theme === "dark" ? "Tema claro" : "Tema escuro"}>
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               <span>{theme === "dark" ? "Tema claro" : "Tema escuro"}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => signOutApp()} tooltip="Sair">
+              <LogOut className="h-4 w-4" />
+              <span>Sair</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
