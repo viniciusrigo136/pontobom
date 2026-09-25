@@ -13,6 +13,7 @@ import { Route as VendasRouteImport } from './routes/vendas'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OrdensRouteImport } from './routes/ordens'
 import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as GarantiasRouteImport } from './routes/garantias'
 import { Route as EstoqueRouteImport } from './routes/estoque'
 import { Route as ContasReceberRouteImport } from './routes/contas-receber'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
@@ -50,6 +51,11 @@ const OrdensRoute = OrdensRouteImport.update({
 const OrcamentosRoute = OrcamentosRouteImport.update({
   id: '/orcamentos',
   path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GarantiasRoute = GarantiasRouteImport.update({
+  id: '/garantias',
+  path: '/garantias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EstoqueRoute = EstoqueRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
+  '/garantias': typeof GarantiasRoute
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
+  '/garantias': typeof GarantiasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/configuracoes': typeof ConfiguracoesRoute
   '/contas-receber': typeof ContasReceberRoute
   '/estoque': typeof EstoqueRoute
+  '/garantias': typeof GarantiasRoute
   '/orcamentos': typeof OrcamentosRouteWithChildren
   '/ordens': typeof OrdensRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/contas-receber'
     | '/estoque'
+    | '/garantias'
     | '/orcamentos'
     | '/ordens'
     | '/reset-password'
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/contas-receber'
     | '/estoque'
+    | '/garantias'
     | '/reset-password'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/contas-receber'
     | '/estoque'
+    | '/garantias'
     | '/orcamentos'
     | '/ordens'
     | '/reset-password'
@@ -294,6 +306,7 @@ export interface RootRouteChildren {
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ContasReceberRoute: typeof ContasReceberRoute
   EstoqueRoute: typeof EstoqueRoute
+  GarantiasRoute: typeof GarantiasRoute
   OrcamentosRoute: typeof OrcamentosRouteWithChildren
   OrdensRoute: typeof OrdensRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -330,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/orcamentos'
       fullPath: '/orcamentos'
       preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/garantias': {
+      id: '/garantias'
+      path: '/garantias'
+      fullPath: '/garantias'
+      preLoaderRoute: typeof GarantiasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/estoque': {
@@ -515,6 +535,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfiguracoesRoute: ConfiguracoesRoute,
   ContasReceberRoute: ContasReceberRoute,
   EstoqueRoute: EstoqueRoute,
+  GarantiasRoute: GarantiasRoute,
   OrcamentosRoute: OrcamentosRouteWithChildren,
   OrdensRoute: OrdensRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
