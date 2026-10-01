@@ -16,7 +16,6 @@ import {
   LogOut,
   ShieldCheck,
 } from "lucide-react";
-import { signOutApp } from "@/components/AuthGate";
 import {
   Sidebar,
   SidebarContent,
@@ -105,12 +104,6 @@ export function AppSidebar() {
             <SidebarMenuButton onClick={toggle} tooltip={theme === "dark" ? "Tema claro" : "Tema escuro"}>
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               <span>{theme === "dark" ? "Tema claro" : "Tema escuro"}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => signOutApp()} tooltip="Sair">
-              <LogOut className="h-4 w-4" />
-              <span>Sair</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
