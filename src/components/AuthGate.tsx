@@ -50,11 +50,11 @@ function SupabaseGate({ children }: { children: ReactNode }) {
 
 export const PUBLIC_AUTH_PATHS = ["/auth", "/reset-password"];
 
-// Site totalmente público por decisão do dono: sem login.
 export function AuthGate({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (USE_SUPABASE_AUTH && PUBLIC_AUTH_PATHS.includes(pathname)) return <>{children}</>;
+  return USE_SUPABASE_AUTH ? <SupabaseGate>{children}</SupabaseGate> : <LoginGate>{children}</LoginGate>;
 }
-void SupabaseGate; void LoginGate; void useRouterState; void USE_SUPABASE_AUTH;
 
 export async function signOutApp() {
   if (USE_SUPABASE_AUTH) {
