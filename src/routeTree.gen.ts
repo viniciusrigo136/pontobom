@@ -9,80 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VendasRouteImport } from './routes/vendas'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as OrdensRouteImport } from './routes/ordens'
-import { Route as OrcamentosRouteImport } from './routes/orcamentos'
-import { Route as GarantiasRouteImport } from './routes/garantias'
-import { Route as EstoqueRouteImport } from './routes/estoque'
-import { Route as ContasReceberRouteImport } from './routes/contas-receber'
-import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
-import { Route as ClientesRouteImport } from './routes/clientes'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AtendenteIaRouteImport } from './routes/atendente-ia'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as VendasIndexRouteImport } from './routes/vendas.index'
-import { Route as OrdensIndexRouteImport } from './routes/ordens.index'
-import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
-import { Route as VendasNovaRouteImport } from './routes/vendas.nova'
-import { Route as VendasIdRouteImport } from './routes/vendas.$id'
-import { Route as OrdensNovaRouteImport } from './routes/ordens.nova'
-import { Route as OrdensIdRouteImport } from './routes/ordens.$id'
-import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
-import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
+import { Route as AtendenteIaRouteImport } from './routes/atendente-ia'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ContasReceberRouteImport } from './routes/contas-receber'
+import { Route as EstoqueRouteImport } from './routes/estoque'
+import { Route as GarantiasRouteImport } from './routes/garantias'
+import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as OrdensRouteImport } from './routes/ordens'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as VendasRouteImport } from './routes/vendas'
 import { Route as AcompanharTokenRouteImport } from './routes/acompanhar.$token'
-import { Route as ApiPublicPrinterNextRouteImport } from './routes/api/public/printer/next'
-import { Route as ApiPublicPrinterCompleteRouteImport } from './routes/api/public/printer/complete'
+import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
+import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
+import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
+import { Route as OrdensIndexRouteImport } from './routes/ordens.index'
+import { Route as OrdensIdRouteImport } from './routes/ordens.$id'
+import { Route as OrdensNovaRouteImport } from './routes/ordens.nova'
+import { Route as VendasIndexRouteImport } from './routes/vendas.index'
+import { Route as VendasIdRouteImport } from './routes/vendas.$id'
+import { Route as VendasNovaRouteImport } from './routes/vendas.nova'
 import { Route as ApiPublicBotConsultaRouteImport } from './routes/api/public/bot/consulta'
+import { Route as ApiPublicPrinterCompleteRouteImport } from './routes/api/public/printer/complete'
+import { Route as ApiPublicPrinterNextRouteImport } from './routes/api/public/printer/next'
 
-const VendasRoute = VendasRouteImport.update({
-  id: '/vendas',
-  path: '/vendas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrdensRoute = OrdensRouteImport.update({
-  id: '/ordens',
-  path: '/ordens',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrcamentosRoute = OrcamentosRouteImport.update({
-  id: '/orcamentos',
-  path: '/orcamentos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GarantiasRoute = GarantiasRouteImport.update({
-  id: '/garantias',
-  path: '/garantias',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstoqueRoute = EstoqueRouteImport.update({
-  id: '/estoque',
-  path: '/estoque',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContasReceberRoute = ContasReceberRouteImport.update({
-  id: '/contas-receber',
-  path: '/contas-receber',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientesRoute = ClientesRouteImport.update({
-  id: '/clientes',
-  path: '/clientes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AtendenteIaRoute = AtendenteIaRouteImport.update({
@@ -90,49 +45,64 @@ const AtendenteIaRoute = AtendenteIaRouteImport.update({
   path: '/atendente-ia',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VendasIndexRoute = VendasIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => VendasRoute,
+const ClientesRoute = ClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const OrdensIndexRoute = OrdensIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => OrdensRoute,
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContasReceberRoute = ContasReceberRouteImport.update({
+  id: '/contas-receber',
+  path: '/contas-receber',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstoqueRoute = EstoqueRouteImport.update({
+  id: '/estoque',
+  path: '/estoque',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GarantiasRoute = GarantiasRouteImport.update({
+  id: '/garantias',
+  path: '/garantias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentosRoute = OrcamentosRouteImport.update({
+  id: '/orcamentos',
+  path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdensRoute = OrdensRouteImport.update({
+  id: '/ordens',
+  path: '/ordens',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendasRoute = VendasRouteImport.update({
+  id: '/vendas',
+  path: '/vendas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcompanharTokenRoute = AcompanharTokenRouteImport.update({
+  id: '/acompanhar/$token',
+  path: '/acompanhar/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OrcamentosIndexRoute = OrcamentosIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => OrcamentosRoute,
-} as any)
-const VendasNovaRoute = VendasNovaRouteImport.update({
-  id: '/nova',
-  path: '/nova',
-  getParentRoute: () => VendasRoute,
-} as any)
-const VendasIdRoute = VendasIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => VendasRoute,
-} as any)
-const OrdensNovaRoute = OrdensNovaRouteImport.update({
-  id: '/nova',
-  path: '/nova',
-  getParentRoute: () => OrdensRoute,
-} as any)
-const OrdensIdRoute = OrdensIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => OrdensRoute,
-} as any)
-const OrcamentosNovoRoute = OrcamentosNovoRouteImport.update({
-  id: '/novo',
-  path: '/novo',
   getParentRoute: () => OrcamentosRoute,
 } as any)
 const OrcamentosIdRoute = OrcamentosIdRouteImport.update({
@@ -140,14 +110,44 @@ const OrcamentosIdRoute = OrcamentosIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => OrcamentosRoute,
 } as any)
-const AcompanharTokenRoute = AcompanharTokenRouteImport.update({
-  id: '/acompanhar/$token',
-  path: '/acompanhar/$token',
-  getParentRoute: () => rootRouteImport,
+const OrcamentosNovoRoute = OrcamentosNovoRouteImport.update({
+  id: '/novo',
+  path: '/novo',
+  getParentRoute: () => OrcamentosRoute,
 } as any)
-const ApiPublicPrinterNextRoute = ApiPublicPrinterNextRouteImport.update({
-  id: '/api/public/printer/next',
-  path: '/api/public/printer/next',
+const OrdensIndexRoute = OrdensIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrdensRoute,
+} as any)
+const OrdensIdRoute = OrdensIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => OrdensRoute,
+} as any)
+const OrdensNovaRoute = OrdensNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => OrdensRoute,
+} as any)
+const VendasIndexRoute = VendasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VendasRoute,
+} as any)
+const VendasIdRoute = VendasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => VendasRoute,
+} as any)
+const VendasNovaRoute = VendasNovaRouteImport.update({
+  id: '/nova',
+  path: '/nova',
+  getParentRoute: () => VendasRoute,
+} as any)
+const ApiPublicBotConsultaRoute = ApiPublicBotConsultaRouteImport.update({
+  id: '/api/public/bot/consulta',
+  path: '/api/public/bot/consulta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPrinterCompleteRoute =
@@ -156,9 +156,9 @@ const ApiPublicPrinterCompleteRoute =
     path: '/api/public/printer/complete',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicBotConsultaRoute = ApiPublicBotConsultaRouteImport.update({
-  id: '/api/public/bot/consulta',
-  path: '/api/public/bot/consulta',
+const ApiPublicPrinterNextRoute = ApiPublicPrinterNextRouteImport.update({
+  id: '/api/public/printer/next',
+  path: '/api/public/printer/next',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -343,74 +343,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vendas': {
-      id: '/vendas'
-      path: '/vendas'
-      fullPath: '/vendas'
-      preLoaderRoute: typeof VendasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ordens': {
-      id: '/ordens'
-      path: '/ordens'
-      fullPath: '/ordens'
-      preLoaderRoute: typeof OrdensRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orcamentos': {
-      id: '/orcamentos'
-      path: '/orcamentos'
-      fullPath: '/orcamentos'
-      preLoaderRoute: typeof OrcamentosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/garantias': {
-      id: '/garantias'
-      path: '/garantias'
-      fullPath: '/garantias'
-      preLoaderRoute: typeof GarantiasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estoque': {
-      id: '/estoque'
-      path: '/estoque'
-      fullPath: '/estoque'
-      preLoaderRoute: typeof EstoqueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contas-receber': {
-      id: '/contas-receber'
-      path: '/contas-receber'
-      fullPath: '/contas-receber'
-      preLoaderRoute: typeof ContasReceberRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/configuracoes': {
-      id: '/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/configuracoes'
-      preLoaderRoute: typeof ConfiguracoesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clientes': {
-      id: '/clientes'
-      path: '/clientes'
-      fullPath: '/clientes'
-      preLoaderRoute: typeof ClientesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/atendente-ia': {
@@ -420,67 +357,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AtendenteIaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vendas/': {
-      id: '/vendas/'
-      path: '/'
-      fullPath: '/vendas/'
-      preLoaderRoute: typeof VendasIndexRouteImport
-      parentRoute: typeof VendasRoute
+    '/clientes': {
+      id: '/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/ordens/': {
-      id: '/ordens/'
-      path: '/'
-      fullPath: '/ordens/'
-      preLoaderRoute: typeof OrdensIndexRouteImport
-      parentRoute: typeof OrdensRoute
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contas-receber': {
+      id: '/contas-receber'
+      path: '/contas-receber'
+      fullPath: '/contas-receber'
+      preLoaderRoute: typeof ContasReceberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estoque': {
+      id: '/estoque'
+      path: '/estoque'
+      fullPath: '/estoque'
+      preLoaderRoute: typeof EstoqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/garantias': {
+      id: '/garantias'
+      path: '/garantias'
+      fullPath: '/garantias'
+      preLoaderRoute: typeof GarantiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamentos': {
+      id: '/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/orcamentos'
+      preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ordens': {
+      id: '/ordens'
+      path: '/ordens'
+      fullPath: '/ordens'
+      preLoaderRoute: typeof OrdensRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendas': {
+      id: '/vendas'
+      path: '/vendas'
+      fullPath: '/vendas'
+      preLoaderRoute: typeof VendasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acompanhar/$token': {
+      id: '/acompanhar/$token'
+      path: '/acompanhar/$token'
+      fullPath: '/acompanhar/$token'
+      preLoaderRoute: typeof AcompanharTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/orcamentos/': {
       id: '/orcamentos/'
       path: '/'
       fullPath: '/orcamentos/'
       preLoaderRoute: typeof OrcamentosIndexRouteImport
-      parentRoute: typeof OrcamentosRoute
-    }
-    '/vendas/nova': {
-      id: '/vendas/nova'
-      path: '/nova'
-      fullPath: '/vendas/nova'
-      preLoaderRoute: typeof VendasNovaRouteImport
-      parentRoute: typeof VendasRoute
-    }
-    '/vendas/$id': {
-      id: '/vendas/$id'
-      path: '/$id'
-      fullPath: '/vendas/$id'
-      preLoaderRoute: typeof VendasIdRouteImport
-      parentRoute: typeof VendasRoute
-    }
-    '/ordens/nova': {
-      id: '/ordens/nova'
-      path: '/nova'
-      fullPath: '/ordens/nova'
-      preLoaderRoute: typeof OrdensNovaRouteImport
-      parentRoute: typeof OrdensRoute
-    }
-    '/ordens/$id': {
-      id: '/ordens/$id'
-      path: '/$id'
-      fullPath: '/ordens/$id'
-      preLoaderRoute: typeof OrdensIdRouteImport
-      parentRoute: typeof OrdensRoute
-    }
-    '/orcamentos/novo': {
-      id: '/orcamentos/novo'
-      path: '/novo'
-      fullPath: '/orcamentos/novo'
-      preLoaderRoute: typeof OrcamentosNovoRouteImport
       parentRoute: typeof OrcamentosRoute
     }
     '/orcamentos/$id': {
@@ -490,18 +448,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrcamentosIdRouteImport
       parentRoute: typeof OrcamentosRoute
     }
-    '/acompanhar/$token': {
-      id: '/acompanhar/$token'
-      path: '/acompanhar/$token'
-      fullPath: '/acompanhar/$token'
-      preLoaderRoute: typeof AcompanharTokenRouteImport
-      parentRoute: typeof rootRouteImport
+    '/orcamentos/novo': {
+      id: '/orcamentos/novo'
+      path: '/novo'
+      fullPath: '/orcamentos/novo'
+      preLoaderRoute: typeof OrcamentosNovoRouteImport
+      parentRoute: typeof OrcamentosRoute
     }
-    '/api/public/printer/next': {
-      id: '/api/public/printer/next'
-      path: '/api/public/printer/next'
-      fullPath: '/api/public/printer/next'
-      preLoaderRoute: typeof ApiPublicPrinterNextRouteImport
+    '/ordens/': {
+      id: '/ordens/'
+      path: '/'
+      fullPath: '/ordens/'
+      preLoaderRoute: typeof OrdensIndexRouteImport
+      parentRoute: typeof OrdensRoute
+    }
+    '/ordens/$id': {
+      id: '/ordens/$id'
+      path: '/$id'
+      fullPath: '/ordens/$id'
+      preLoaderRoute: typeof OrdensIdRouteImport
+      parentRoute: typeof OrdensRoute
+    }
+    '/ordens/nova': {
+      id: '/ordens/nova'
+      path: '/nova'
+      fullPath: '/ordens/nova'
+      preLoaderRoute: typeof OrdensNovaRouteImport
+      parentRoute: typeof OrdensRoute
+    }
+    '/vendas/': {
+      id: '/vendas/'
+      path: '/'
+      fullPath: '/vendas/'
+      preLoaderRoute: typeof VendasIndexRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/vendas/$id': {
+      id: '/vendas/$id'
+      path: '/$id'
+      fullPath: '/vendas/$id'
+      preLoaderRoute: typeof VendasIdRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/vendas/nova': {
+      id: '/vendas/nova'
+      path: '/nova'
+      fullPath: '/vendas/nova'
+      preLoaderRoute: typeof VendasNovaRouteImport
+      parentRoute: typeof VendasRoute
+    }
+    '/api/public/bot/consulta': {
+      id: '/api/public/bot/consulta'
+      path: '/api/public/bot/consulta'
+      fullPath: '/api/public/bot/consulta'
+      preLoaderRoute: typeof ApiPublicBotConsultaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/printer/complete': {
@@ -511,11 +511,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPrinterCompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/bot/consulta': {
-      id: '/api/public/bot/consulta'
-      path: '/api/public/bot/consulta'
-      fullPath: '/api/public/bot/consulta'
-      preLoaderRoute: typeof ApiPublicBotConsultaRouteImport
+    '/api/public/printer/next': {
+      id: '/api/public/printer/next'
+      path: '/api/public/printer/next'
+      fullPath: '/api/public/printer/next'
+      preLoaderRoute: typeof ApiPublicPrinterNextRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
