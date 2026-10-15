@@ -386,6 +386,82 @@ export type Database = {
           },
         ]
       }
+      os_acompanhamento: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          mostrar_defeito: boolean
+          os_id: string
+          token: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          mostrar_defeito?: boolean
+          os_id: string
+          token: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          mostrar_defeito?: boolean
+          os_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_acompanhamento_os_id_fkey"
+            columns: ["os_id"]
+            isOneToOne: true
+            referencedRelation: "ordens_servico"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      os_atualizacoes: {
+        Row: {
+          created_at: string
+          editado_em: string | null
+          fotos: Json
+          id: string
+          observacao: string | null
+          os_id: string
+          publico: boolean
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          editado_em?: string | null
+          fotos?: Json
+          id?: string
+          observacao?: string | null
+          os_id: string
+          publico?: boolean
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          editado_em?: string | null
+          fotos?: Json
+          id?: string
+          observacao?: string | null
+          os_id?: string
+          publico?: boolean
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_atualizacoes_os_id_fkey"
+            columns: ["os_id"]
+            isOneToOne: false
+            referencedRelation: "ordens_servico"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pagamentos_receber: {
         Row: {
           conta_id: string

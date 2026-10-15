@@ -30,6 +30,7 @@ import { Route as OrdensNovaRouteImport } from './routes/ordens.nova'
 import { Route as OrdensIdRouteImport } from './routes/ordens.$id'
 import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
 import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
+import { Route as AcompanharTokenRouteImport } from './routes/acompanhar.$token'
 import { Route as ApiPublicPrinterNextRouteImport } from './routes/api/public/printer/next'
 import { Route as ApiPublicPrinterCompleteRouteImport } from './routes/api/public/printer/complete'
 import { Route as ApiPublicBotConsultaRouteImport } from './routes/api/public/bot/consulta'
@@ -139,6 +140,11 @@ const OrcamentosIdRoute = OrcamentosIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => OrcamentosRoute,
 } as any)
+const AcompanharTokenRoute = AcompanharTokenRouteImport.update({
+  id: '/acompanhar/$token',
+  path: '/acompanhar/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPrinterNextRoute = ApiPublicPrinterNextRouteImport.update({
   id: '/api/public/printer/next',
   path: '/api/public/printer/next',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/ordens': typeof OrdensRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/vendas': typeof VendasRouteWithChildren
+  '/acompanhar/$token': typeof AcompanharTokenRoute
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/estoque': typeof EstoqueRoute
   '/garantias': typeof GarantiasRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/acompanhar/$token': typeof AcompanharTokenRoute
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/ordens': typeof OrdensRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/vendas': typeof VendasRouteWithChildren
+  '/acompanhar/$token': typeof AcompanharTokenRoute
   '/orcamentos/$id': typeof OrcamentosIdRoute
   '/orcamentos/novo': typeof OrcamentosNovoRoute
   '/ordens/$id': typeof OrdensIdRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/ordens'
     | '/reset-password'
     | '/vendas'
+    | '/acompanhar/$token'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
     | '/ordens/$id'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/estoque'
     | '/garantias'
     | '/reset-password'
+    | '/acompanhar/$token'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
     | '/ordens/$id'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/ordens'
     | '/reset-password'
     | '/vendas'
+    | '/acompanhar/$token'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
     | '/ordens/$id'
@@ -323,6 +335,7 @@ export interface RootRouteChildren {
   OrdensRoute: typeof OrdensRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   VendasRoute: typeof VendasRouteWithChildren
+  AcompanharTokenRoute: typeof AcompanharTokenRoute
   ApiPublicBotConsultaRoute: typeof ApiPublicBotConsultaRoute
   ApiPublicPrinterCompleteRoute: typeof ApiPublicPrinterCompleteRoute
   ApiPublicPrinterNextRoute: typeof ApiPublicPrinterNextRoute
@@ -477,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrcamentosIdRouteImport
       parentRoute: typeof OrcamentosRoute
     }
+    '/acompanhar/$token': {
+      id: '/acompanhar/$token'
+      path: '/acompanhar/$token'
+      fullPath: '/acompanhar/$token'
+      preLoaderRoute: typeof AcompanharTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/printer/next': {
       id: '/api/public/printer/next'
       path: '/api/public/printer/next'
@@ -560,6 +580,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrdensRoute: OrdensRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   VendasRoute: VendasRouteWithChildren,
+  AcompanharTokenRoute: AcompanharTokenRoute,
   ApiPublicBotConsultaRoute: ApiPublicBotConsultaRoute,
   ApiPublicPrinterCompleteRoute: ApiPublicPrinterCompleteRoute,
   ApiPublicPrinterNextRoute: ApiPublicPrinterNextRoute,
