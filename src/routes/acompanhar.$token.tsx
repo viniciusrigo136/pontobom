@@ -51,12 +51,23 @@ function Portal() {
           <p className="text-xs text-muted-foreground mt-2">Última atualização: {fmt(dados.ultimaAtualizacao)}</p>
         </section>
 
-        {dados.defeito && (
-          <section className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Defeito relatado</p>
-            <p className="text-sm whitespace-pre-wrap">{dados.defeito}</p>
-          </section>
-        )}
+        <section className="rounded-xl border border-border bg-card p-4 space-y-3">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Detalhes da ordem</p>
+          <div className="flex justify-between gap-4 text-sm">
+            <span className="text-muted-foreground">Aparelho</span>
+            <span className="text-right font-medium">{[dados.tipo, dados.modelo].filter(Boolean).join(" · ") || "—"}</span>
+          </div>
+          <div className="flex justify-between gap-4 text-sm">
+            <span className="text-muted-foreground">Defeito relatado</span>
+            <span className="text-right font-medium whitespace-pre-wrap">{dados.defeito || "—"}</span>
+          </div>
+          <div className="flex justify-between gap-4 text-sm">
+            <span className="text-muted-foreground">Valor</span>
+            <span className="text-right font-semibold">
+              {dados.valor > 0 ? dados.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : "—"}
+            </span>
+          </div>
+        </section>
 
         {idx >= 0 && (
           <section className="rounded-xl border border-border bg-card p-4">

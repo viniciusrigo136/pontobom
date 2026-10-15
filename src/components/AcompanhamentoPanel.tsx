@@ -116,11 +116,6 @@ export function AcompanhamentoPanel({
     await supabase.from("os_acompanhamento").update({ ativo: false }).eq("id", link.id);
     setQr(null); toast.success("Link desativado"); reload();
   };
-  const toggleDefeito = async (v: boolean) => {
-    if (!link) return;
-    await supabase.from("os_acompanhamento").update({ mostrar_defeito: v }).eq("id", link.id);
-    reload();
-  };
   const copiar = async () => { if (url) { await navigator.clipboard.writeText(url); toast.success("Link copiado"); } };
   const whats = () => {
     if (!url) return;
@@ -144,10 +139,6 @@ export function AcompanhamentoPanel({
                 <Button variant="outline" onClick={gerarQr}><QrCode className="mr-2 h-4 w-4" />Gerar QR Code</Button>
                 <Button variant="outline" onClick={gerarLink}><RefreshCw className="mr-2 h-4 w-4" />Gerar novo</Button>
                 <Button variant="outline" onClick={revogar}><Ban className="mr-2 h-4 w-4" />Desativar</Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch id="def" checked={link?.mostrar_defeito ?? false} onCheckedChange={toggleDefeito} />
-                <Label htmlFor="def">Mostrar o defeito relatado ao cliente</Label>
               </div>
               {qr && <img src={qr} alt="QR Code do acompanhamento" className="w-40 h-40 bg-card rounded" />}
             </>

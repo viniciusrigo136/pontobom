@@ -35,8 +35,7 @@ export type AtualizacaoRow = {
 
 /** Monta somente os dados que o cliente pode ver. */
 export function montarPublico(input: {
-  os: { numero: number; modelo_aparelho: string | null; problema_relatado: string | null; status: string; tipo_dispositivo: string | null; data_entrada: string };
-  mostrarDefeito: boolean;
+  os: { numero: number; modelo_aparelho: string | null; problema_relatado: string | null; status: string; tipo_dispositivo: string | null; data_entrada: string; valor_total: number };
   atualizacoes: AtualizacaoRow[];
 }) {
   const pubs = input.atualizacoes.filter((a) => a.publico).sort((a, b) => a.created_at.localeCompare(b.created_at));
@@ -45,7 +44,8 @@ export function montarPublico(input: {
     numero: input.os.numero,
     modelo: input.os.modelo_aparelho,
     tipo: input.os.tipo_dispositivo,
-    defeito: input.mostrarDefeito ? input.os.problema_relatado : null,
+    defeito: input.os.problema_relatado,
+    valor: input.os.valor_total,
     status: statusPublico(input.os.status),
     ultimaAtualizacao: ultima,
     linha: pubs.map((a) => ({
