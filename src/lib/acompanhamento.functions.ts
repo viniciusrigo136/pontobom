@@ -10,11 +10,11 @@ export const getAcompanhamento = createServerFn({ method: "GET" })
     if (!tokenValido(data.token)) return { ok: false as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: link } = await supabaseAdmin
-      .from("os_acompanhamento").select("os_id, ativo, mostrar_defeito").eq("token", data.token).maybeSingle();
+      .from("os_acompanhamento").select("os_id, ativo").eq("token", data.token).maybeSingle();
     if (!link || !link.ativo) return { ok: false as const };
     const [{ data: os }, { data: ats }, { data: emp }] = await Promise.all([
       supabaseAdmin.from("ordens_servico")
-        .select("numero, modelo_aparelho, problema_relatado, status, tipo_dispositivo, data_entrada")
+        .select("numero, modelo_aparelho, problema_relatado, status, tipo_dispositivo, data_entrada, valor_total")
         .eq("id", link.os_id).maybeSingle(),
       supabaseAdmin.from("os_atualizacoes")
         .select("id, status, observacao, publico, fotos, created_at, editado_em")
