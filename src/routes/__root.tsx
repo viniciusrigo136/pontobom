@@ -96,7 +96,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  if (pathname === "/auth" || pathname === "/reset-password") {
+  if (pathname === "/auth" || pathname === "/reset-password" || pathname.startsWith("/acompanhar/")) {
     return (
       <QueryClientProvider client={queryClient}>
         <Outlet />

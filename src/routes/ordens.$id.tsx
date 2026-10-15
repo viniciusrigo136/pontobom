@@ -152,12 +152,10 @@ function OSDetail() {
             <>
               <Button variant="outline" asChild><Link to="/ordens"><ArrowLeft className="mr-2 h-4 w-4" /> Voltar</Link></Button>
               <Select value={os.status} onValueChange={mudarStatus}>
-                <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Aguardando">Aguardando</SelectItem>
-                  <SelectItem value="Em andamento">Em andamento</SelectItem>
-                  <SelectItem value="Pronto">Pronto</SelectItem>
-                  <SelectItem value="Entregue">Entregue</SelectItem>
+                  {!STATUS_OS.includes(os.status as never) && <SelectItem value={os.status}>{os.status}</SelectItem>}
+                  {STATUS_OS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Button variant="outline" onClick={() => printAs("a4")}>
