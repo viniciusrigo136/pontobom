@@ -14,6 +14,10 @@ import { ReciboTermicoView } from "@/components/ReciboTermicoView";
 import { buildReciboTermico, formaPagamentoRecibo } from "@/lib/recibo-termico";
 import { toast } from "sonner";
 import { useFotoUrls } from "@/lib/fotos";
+import { STATUS_OS } from "@/lib/acompanhamento";
+import { AcompanhamentoPanel, useLinkAcompanhamento } from "@/components/AcompanhamentoPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import QRCode from "qrcode";
 
 export const Route = createFileRoute("/ordens/$id")({ component: OSDetail });
 
@@ -81,6 +85,12 @@ function OSDetail() {
   const [enviandoTermica, setEnviandoTermica] = useState(false);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
+  const { url: linkCliente } = useLinkAcompanhamento(id);
+  const [qrPrint, setQrPrint] = useState<string | null>(null);
+  useEffect(() => {
+    if (!linkCliente) return setQrPrint(null);
+    QRCode.toDataURL(linkCliente, { margin: 0, width: 200 }).then(setQrPrint);
+  }, [linkCliente]);
 
   // Acompanha o trabalho de impressão enviado até o agente confirmar.
   useEffect(() => {
@@ -221,6 +231,15 @@ function OSDetail() {
           </div>
         )}
 
+        <Tabs defaultValue="detalhes">
+          <TabsList className="mb-4">
+            <TabsTrigger value="detalhes">Detalhes</TabsTrigger>
+            <TabsTrigger value="acompanhamento">Acompanhamento</TabsTrigger>
+          </TabsList>
+          <TabsContent value="acompanhamento">
+            <AcompanhamentoPanel osId={id} numero={os.numero} status={os.status} clienteTelefone={cliente?.telefone ?? null} onStatusChange={async (st) => { await mudarStatus(st); }} />
+          </TabsContent>
+          <TabsContent value="detalhes">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           <Card>
             <CardHeader><CardTitle className="text-sm">Cliente</CardTitle></CardHeader>
@@ -278,6 +297,8 @@ function OSDetail() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* ================= Impressão A4 ================= */}
@@ -352,6 +373,12 @@ function OSDetail() {
         <p className="mt-6 text-center text-xs">
           Este comprovante é válido para garantia e não possui valor fiscal.
         </p>
+        {qrPrint && (
+          <div className="mt-4 flex flex-col items-center gap-1">
+            <img src={qrPrint} alt="" className="h-24 w-24" />
+            <p className="text-xs">Acompanhe seu conserto pelo QR Code</p>
+          </div>
+        )}
       </div>
 
       {/* ================= Impressão Térmica 80mm (mesma fonte do envio remoto) ================= */}
