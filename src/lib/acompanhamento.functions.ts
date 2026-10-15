@@ -22,7 +22,7 @@ export const getAcompanhamento = createServerFn({ method: "GET" })
       supabaseAdmin.from("empresa").select("nome, telefone, app_titulo").limit(1).maybeSingle(),
     ]);
     if (!os) return { ok: false as const };
-    const pub = montarPublico({ os, mostrarDefeito: link.mostrar_defeito, atualizacoes: ats ?? [] });
+    const pub = montarPublico({ os, atualizacoes: ats ?? [] });
     // Fotos privadas viram links temporários (20 min); URLs antigas passam como estão.
     const paths = pub.linha.flatMap((l) => l.fotos).filter((f) => f.startsWith(PREFIX)).map((f) => f.slice(PREFIX.length));
     const map: Record<string, string> = {};
