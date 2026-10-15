@@ -1,70 +1,23 @@
-## PontoBom OS — Segurança antes do bot (plano técnico, nada será alterado agora)
+# Portal de Acompanhamento de OS
 
-### Estado atual verificado
-- Login: `LoginGate` com usuário/senha fixos no código do navegador e flag em `localStorage`. Não é autenticação real; qualquer pessoa com a chave pública do app acessa o banco diretamente.
-- Banco: `clientes`, `contas_receber`, `empresa`, `estoque`, `orcamentos`, `ordens_servico`, `pagamentos_receber`, `vendas` têm policy `ALL` para `public` (leitura e escrita abertas).
-- `print_jobs`: leitura/inserção para `anon, authenticated`; sem update/delete.
-- Storage `protechos` (privado): select/insert/update/delete abertos para `public`. Fotos usam URLs assinadas de 5 anos salvas em `ordens_servico.fotos`.
-- Impressora: `/api/public/printer/next` e `/complete` usam `PRINTER_AGENT_TOKEN` + cliente admin no servidor (não depende de RLS).
-- Todas as telas leem/escrevem pelo cliente do navegador (19 arquivos). `attachSupabaseAuth` já está registrado em `src/start.ts`.
+## Situação atual
+- OS já tem `status` (Aguardando / Em andamento / Pronto / Entregue), `fotos` e impressão A4/térmica.
+- As tabelas hoje estão abertas ao público (pedido anterior de tirar o login). Isso conflita com o item 5 (segurança) do portal: com tabelas públicas, qualquer pessoa lê todas as OS mesmo sem o link. Ver "Decisão necessária".
 
-### Fase 0 — Preparação (sem impacto)
-1. Snapshot das policies atuais em `supabase/rollback/policies_publicas.sql` (texto exato para recriar).
-2. Export/backup das tabelas (CSV) e lista de objetos do bucket.
-3. Janela de mudança fora do horário comercial; avisar funcionários.
+## O que será feito
+1. **Etapas novas**: lista de 13 status (10 do fluxo + Orçamento recusado, Cancelada, Sem reparo). Os 4 antigos são mapeados (Aguardando→Aparelho recebido, Em andamento→Em manutenção, Pronto→Pronto para retirada, Entregue→Entregue) sem perder dados. O status da OS continua sendo um só, usado no painel e no portal.
+2. **Aba Acompanhamento na OS**: mudar etapa, escrever observação, enviar várias fotos (câmera ou galeria, comprimidas e validadas), marcar "visível ao cliente", editar/ocultar atualizações antigas, histórico em ordem de data.
+3. **Link exclusivo**: token aleatório de 32 bytes por OS; botões Copiar link, Enviar pelo WhatsApp (wa.me com mensagem pronta, sem envio automático), QR Code, Revogar/Gerar novo.
+4. **Portal público `/acompanhar/$token`**: número da OS, modelo, defeito (se autorizado), status em destaque, linha do tempo, fotos públicas com ampliação, observações públicas, última atualização, botão WhatsApp da loja. Feito para celular, `noindex`.
+5. **QR Code no comprovante**: pequeno, ao final da A4 e da térmica do navegador, sem mudar o resto do layout. Impressora remota não muda.
 
-### Fase 1 — Autenticação real em paralelo (RLS ainda aberta)
-1. Ativar login por e-mail/senha; sem cadastro público (desativar signups após criar contas); HIBP ligado.
-2. Criar conta do dono (e funcionários) manualmente.
-3. Roles mínimos em tabela separada: enum `app_role` = `owner`, `staff`; `user_roles` + função `has_role()` security definer. Sem role em profile.
-4. Nova tela `/auth` e hook de sessão; `onAuthStateChange` no root. Substituir `LoginGate` por um gate baseado em sessão Supabase, com flag de recurso: enquanto desligada, o login antigo continua valendo.
-5. Botão "Sair" usando `supabase.auth.signOut()`; página de redefinir senha.
-6. Teste: dono entra, usa todo o sistema; nada muda para quem não trocou.
+## Detalhes técnicos
+- Tabelas: `os_acompanhamento_token` (os_id, token_hash, ativo, mostrar_defeito) e `os_atualizacoes` (os_id, status, observacao, publico, fotos jsonb, created_at, editado_em). Sem acesso anônimo.
+- Portal lê por server function que valida o hash do token no servidor e devolve só campos públicos; fotos públicas saem como links assinados de 20 min. Nunca usa id sequencial.
+- Bibliotecas: `qrcode` (geração local) e compressão via canvas.
+- Testes: token inválido/revogado não retorna nada; token de uma OS não mostra outra; resposta não contém campos internos.
 
-### Fase 2 — Restringir o banco (incremental, tabela a tabela)
-1. Migração A (aditiva): policies `TO authenticated` usando `has_role(auth.uid(),'owner') OR has_role(auth.uid(),'staff')` em todas as tabelas; GRANTs para `authenticated`/`service_role`. As públicas continuam — nada quebra.
-2. Ligar a flag do novo login no app e validar em produção por 1–2 dias (todos os usuários já logados de verdade).
-3. Migração B: remover as policies públicas, começando por `contas_receber`, `pagamentos_receber`, `clientes`; depois o resto. Revogar `anon` das tabelas. `print_jobs`: insert/select só `authenticated`.
-4. Regras opcionais por role: `staff` sem acesso a `contas_receber`/`pagamentos_receber`/`empresa` escrita (decidir com o dono).
-5. Storage: policies `protechos` só `authenticated`. URLs assinadas já emitidas seguem válidas até expirar; para revogar, trocar para salvar o caminho do arquivo e gerar URL curta ao exibir (mudança separada, compatível com os dois formatos).
-
-### Impressão térmica
-- Continua igual: endpoints usam token próprio e cliente admin no servidor, não são afetados pela RLS.
-- O botão "Imprimir na térmica" insere em `print_jobs` como usuário logado (policy authenticated). Testar após a Migração B.
-- Recomendado depois: rotacionar `PRINTER_AGENT_TOKEN` e atualizar `agent.py`.
-
-### Rollback
-- Fase 1: desligar a flag → volta o `LoginGate` antigo.
-- Fase 2: executar `policies_publicas.sql` (recria as policies públicas) + desligar a flag. Leva segundos, sem perda de dados (nenhuma coluna removida).
-
-### Testes por fase
-- Com sessão: criar/editar OS, orçamento→OS, venda, baixa de estoque, contas a receber, pagamento, upload de fotos, logo, impressão A4/80mm/remota.
-- Sem sessão (chave pública via curl): toda tabela retorna vazio/erro; upload no bucket negado.
-- Linter e scan de segurança do backend sem alertas críticos.
-- Impressora: `/next` sem token 401, com token JSON.
-
-### Fase 3 — Endpoint somente leitura para o bot (só após Fase 2)
-1. Banco: view/função `bot_estoque_publico` (security definer, colunas: `nome`, `disponivel` boolean = quantidade>0, `preco_venda`), filtra `preco_venda > 0`. Nunca `preco_custo`, quantidade exata ou outras tabelas. Execução só para `service_role`.
-2. Tabela `garantia_regras` (tipo de serviço, texto, `aprovado` boolean, editável só pelo `owner`), com tela simples em Configurações. Bot só lê itens aprovados; sem regras aprovadas responde "encaminhar".
-3. Rota `POST /api/public/bot/consulta`:
-   - Headers `X-Bot-Timestamp`, `X-Bot-Signature` = HMAC-SHA256(segredo, timestamp + "." + corpo), comparação em tempo constante, janela 5 min, nonce opcional anti-replay.
-   - Segredo `BOT_HMAC_SECRET` compartilhado com o n8n (criado pelo dono e salvo nos Secrets), separado do token da impressora.
-   - Corpo máx. 2 KB, validação Zod `{ tipo: "estoque"|"garantia", termo: string(2..80) }`.
-   - Rate limit: tabela `bot_rate_limit` (janela por minuto por assinatura/IP), ex. 30 req/min; 429 acima disso.
-   - Resposta mínima: `{ itens: [{ nome, disponivel, preco_venda }] }` máx. 5; ambíguo → `{ encaminhar: true }`. Garantia: `{ regra }` ou `{ encaminhar: true }`.
-   - Logs sem conteúdo sensível; erros genéricos.
-4. Testes: assinatura inválida/expirada 401, replay rejeitado, excesso 429, payload grande 413, resposta sem campos proibidos.
-5. Só depois: publicar e conectar o n8n (fora deste escopo, exige autorização).
-
-### Riscos
-- Travar a loja se alguém não tiver conta real no momento da Migração B → mitigado pela ordem aditiva, flag e script de rollback.
-- Sessões antigas em `localStorage` do login falso: ignoradas pelo novo gate.
-- URLs de fotos já emitidas continuam acessíveis até expirar (5 anos) — só resolvido com a mudança de caminho + URL curta.
-- Preview e publicado usam o mesmo banco: toda migração afeta produção imediatamente; aplicar só na janela combinada.
-- Signups abertos por engano → desativar após criar as contas.
-- Vazamento do segredo do bot expõe apenas nome/disponibilidade/preço; rotação simples.
-
-### Detalhes técnicos
-- Gate: rotas protegidas movidas para `_authenticated/` (layout gerenciado, `ssr:false`) ou gate de sessão no root durante a transição.
-- Nenhuma coluna removida; todas as mudanças de schema são aditivas.
-- Endpoint do bot usa cliente admin apenas para chamar a função restrita.
+## Decisão necessária
+Para o portal ser seguro, as tabelas precisam voltar a ficar fechadas ao público. Opções:
+- **A (recomendado)**: o painel da loja continua sem login para vocês, mas o acesso aos dados passa a ser só pelo servidor do app — o portal fica realmente protegido.
+- **B**: manter tudo aberto como está; o portal funciona, mas qualquer pessoa técnica consegue ver todas as OS e clientes.
