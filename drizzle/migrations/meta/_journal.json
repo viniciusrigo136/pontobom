@@ -8,6 +8,13 @@
       "when": 1792024180326,
       "tag": "0000_portal_acompanhamento",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793321393254,
+      "tag": "0001_fechar_dados_publicos",
+      "breakpoints": true
     }
   ]
 }
